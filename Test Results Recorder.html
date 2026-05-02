@@ -36,6 +36,11 @@
   :root[data-color="green"] { --primary: #16a34a; --primary-2: #15803d; --primary-light: rgba(22,163,74,.12); --grad-1: #16a34a; --grad-2: #059669; }
   :root[data-color="purple"] { --primary: #9333ea; --primary-2: #7e22ce; --primary-light: rgba(147,51,234,.12); --grad-1: #9333ea; --grad-2: #c026d3; }
   :root[data-color="rose"] { --primary: #e11d48; --primary-2: #be123c; --primary-light: rgba(225,29,72,.12); --grad-1: #e11d48; --grad-2: #f43f5e; }
+  :root[data-color="orange"] { --primary: #ea580c; --primary-2: #c2410c; --primary-light: rgba(234,88,12,.12); --grad-1: #ea580c; --grad-2: #f59e0b; }
+  :root[data-color="teal"] { --primary: #0d9488; --primary-2: #0f766e; --primary-light: rgba(13,148,136,.12); --grad-1: #0d9488; --grad-2: #14b8a6; }
+  :root[data-color="indigo"] { --primary: #4f46e5; --primary-2: #4338ca; --primary-light: rgba(79,70,229,.12); --grad-1: #4f46e5; --grad-2: #818cf8; }
+  :root[data-color="pink"] { --primary: #db2777; --primary-2: #be185d; --primary-light: rgba(219,39,119,.12); --grad-1: #db2777; --grad-2: #f472b6; }
+  :root[data-color="cyan"] { --primary: #0891b2; --primary-2: #0e7490; --primary-light: rgba(8,145,178,.12); --grad-1: #0891b2; --grad-2: #22d3ee; }
 
   *{ box-sizing:border-box; }
   body{ margin:0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s ease, color 0.3s ease; }
@@ -342,11 +347,16 @@
           <div class="theme-card" data-set-theme="dark">🌙 Dark</div>
         </div>
         <div class="label" style="margin-bottom: 10px;">Accent Color</div>
-        <div class="color-grid">
+        <div class="color-grid" style="flex-wrap: wrap;">
           <div class="color-swatch" data-set-color="blue" style="background: #2563eb;"></div>
           <div class="color-swatch" data-set-color="green" style="background: #16a34a;"></div>
           <div class="color-swatch" data-set-color="purple" style="background: #9333ea;"></div>
           <div class="color-swatch" data-set-color="rose" style="background: #e11d48;"></div>
+          <div class="color-swatch" data-set-color="orange" style="background: #ea580c;"></div>
+          <div class="color-swatch" data-set-color="teal" style="background: #0d9488;"></div>
+          <div class="color-swatch" data-set-color="indigo" style="background: #4f46e5;"></div>
+          <div class="color-swatch" data-set-color="pink" style="background: #db2777;"></div>
+          <div class="color-swatch" data-set-color="cyan" style="background: #0891b2;"></div>
         </div>
       </div>
       <div class="dlg-actions">
