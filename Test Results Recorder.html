@@ -204,6 +204,7 @@
         Test Result Recorder
       </div>
       <div class="actions">
+        <button class="btn secondary" id="compareBtn">⚖️ Compare</button>
         <button class="btn secondary" id="themeBtn">🎨 Theme</button>
         <button class="btn secondary" id="helpBtn">❓ Help</button> 
         <button class="btn secondary" id="renameTabBtn">✏️ Rename Tab</button>
@@ -240,6 +241,42 @@
       <div class="dlg-actions">
         <button class="btn secondary" id="dlgCancel">Cancel</button>
         <button class="btn" id="dlgOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Scenarios Split-Pane Modal -->
+  <div class="dlg-backdrop" id="compareBackdrop" role="dialog" style="z-index: 90;">
+    <div class="dlg" style="width: 95vw; max-width: 1600px; height: 95vh; display: flex; flex-direction: column;">
+      <div class="dlg-head" style="display:flex; justify-content:space-between; align-items:center;">
+        <span>⚖️ Compare Scenarios</span>
+        <div style="display:flex; align-items:center; gap: 16px;">
+          <label style="font-size: 13px; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:6px; color: var(--text);">
+            <input type="checkbox" id="compSync" checked> Sync Scroll
+          </label>
+          <button class="btn secondary" id="compCloseBtn" style="padding: 6px 12px;">Close</button>
+        </div>
+      </div>
+      <div class="dlg-body" style="flex:1; padding: 12px; background: var(--surface-2); display: grid; grid-template-columns: 1fr 1fr; gap: 12px; overflow: hidden;">
+        
+        <!-- LEFT PANE -->
+        <div style="display:flex; flex-direction:column; background: var(--surface); border: 1px solid var(--outline); border-radius: 8px; min-height: 0;">
+          <div style="padding: 8px; border-bottom: 1px solid var(--outline); display:flex; gap:8px;">
+            <select class="input" id="compLeftTab" style="padding:6px; height:auto; flex: 1; min-width: 0;"></select>
+            <select class="input" id="compLeftScen" style="padding:6px; height:auto; flex: 2; min-width: 0;"></select>
+          </div>
+          <div class="evidence readonly" id="compLeftEv" style="flex:1; overflow-y:auto; overflow-x:hidden; padding:16px; border:none; margin:0; border-radius:0;"></div>
+        </div>
+
+        <!-- RIGHT PANE -->
+        <div style="display:flex; flex-direction:column; background: var(--surface); border: 1px solid var(--outline); border-radius: 8px; min-height: 0;">
+          <div style="padding: 8px; border-bottom: 1px solid var(--outline); display:flex; gap:8px;">
+            <select class="input" id="compRightTab" style="padding:6px; height:auto; flex: 1; min-width: 0;"></select>
+            <select class="input" id="compRightScen" style="padding:6px; height:auto; flex: 2; min-width: 0;"></select>
+          </div>
+          <div class="evidence readonly" id="compRightEv" style="flex:1; overflow-y:auto; overflow-x:hidden; padding:16px; border:none; margin:0; border-radius:0;"></div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -372,8 +409,8 @@
       <div class="dlg-body">
         <ul class="help-list" style="margin-bottom: 20px;">
           <li><b>Header Editing:</b> Click directly on a scenario's name in the header to edit it instantly.</li>
-          <li><b>Evidence Formatting:</b> The Evidence toolbar lets you apply Bold, Italics, and Bullet Lists to structure your notes.</li>
-          <li><b>File Previews & Copying:</b> Clicking an attached text file opens a reading window where you can copy the text. Clicking the 📋 icon next to any attachment copies the entire file block so you can paste it exactly where your cursor is in another scenario.</li>
+          <li><b>File Previews & Copying:</b> Clicking an attached file opens a reading window where you can copy the text. Clicking the 📋 icon next to any attachment copies the entire file block so you can paste it exactly where your cursor is in another scenario.</li>
+          <li><b>Compare Mode:</b> Click "⚖️ Compare" to open a split-pane view, perfect for evaluating "Before" and "After" evidence side-by-side with synchronized scrolling.</li>
           <li><b>Selective Export:</b> Click "⬇ Export" to pick exactly which tabs and scenarios you want to share with your team.</li>
           <li><b>Smart Import:</b> Load a colleague's exported file and choose to merge it into your active session without losing your own work. Imported scenarios are clearly tagged.</li>
         </ul>
@@ -386,6 +423,7 @@
           <li><span class="kbd">Alt</span> + <span class="kbd">R</span> : Rename Active Tab</li>
           <li><span class="kbd">Alt</span> + <span class="kbd">N</span> : Add Scenario</li>
           <li><span class="kbd">Alt</span> + <span class="kbd">F</span> : Add Field</li>
+          <li><span class="kbd">Alt</span> + <span class="kbd">V</span> : Open Compare Mode</li>
         </ul>
       </div>
       <div class="dlg-actions">
@@ -421,11 +459,11 @@ document.querySelectorAll('[data-set-theme]').forEach(el => { el.addEventListene
 document.querySelectorAll('[data-set-color]').forEach(el => { el.addEventListener('click', (e) => { currentColor = e.target.dataset.setColor; applyTheme(); }); });
 
 /* ========= State & Storage ========= */
-const STORAGE_KEY = "test_recorder_tabs_v15"; 
+const STORAGE_KEY = "test_recorder_tabs_v16"; 
 let lastFocusedScenarioId = null; 
 let targetScenarioForFile = null; 
 let pendingImportData = null; 
-let savedRange = null; // Used to track exact cursor location for inserting files/images
+let savedRange = null; 
 
 let state = loadState() || {
   activeTabId: null,
@@ -535,7 +573,6 @@ function renderScenarioCard(sc, idx){
   const evidence = d.querySelector(`[data-evidence="${sc.id}"]`);
   evidence.innerHTML = sc.evidenceHtml || "";
 
-  // == RETROACTIVE FIX: Inject missing copy buttons into old saved HTML ==
   let htmlUpdated = false;
   evidence.querySelectorAll('.attachment').forEach(att => {
     if(!att.querySelector('.copy-att')) {
@@ -573,7 +610,6 @@ function updateToolbarState() {
   }
 }
 
-// Track exactly where the cursor is for perfect file insertion
 document.addEventListener("selectionchange", () => {
   updateToolbarState();
   const sel = window.getSelection();
@@ -625,17 +661,16 @@ fpCopyBtn.addEventListener("click", async () => {
 const imgBackdrop = document.getElementById("imgPreviewBackdrop");
 imgBackdrop.addEventListener("click", () => { imgBackdrop.style.display = "none"; });
 
-// BUG FIX: Double-Click vs Single Click Logic for Images
 let imgClickTimer = null;
 document.addEventListener("click", (e) => {
   const img = e.target.closest(".evidence img"); if (!img) return;
-  if (e.detail > 1) return; // Prevent triggering on double click
+  if (e.detail > 1) return; 
   
   clearTimeout(imgClickTimer);
   imgClickTimer = setTimeout(() => {
     let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%";
     const ev = img.closest('.evidence');
-    if (ev) persistEvidence(ev); // BUG FIX: Forces app to remember the new size
+    if (ev) persistEvidence(ev); 
   }, 200);
 });
 
@@ -647,6 +682,86 @@ document.addEventListener("dblclick", (e) => {
     imgBackdrop.style.display = "flex"; 
     window.getSelection().removeAllRanges(); 
   }
+});
+
+// ========= COMPARE MODE LOGIC =========
+const compareBtn = document.getElementById("compareBtn");
+const compBackdrop = document.getElementById("compareBackdrop");
+const compCloseBtn = document.getElementById("compCloseBtn");
+
+const compLeftTab = document.getElementById("compLeftTab");
+const compLeftScen = document.getElementById("compLeftScen");
+const compLeftEv = document.getElementById("compLeftEv");
+
+const compRightTab = document.getElementById("compRightTab");
+const compRightScen = document.getElementById("compRightScen");
+const compRightEv = document.getElementById("compRightEv");
+
+function populateCompareSelects() {
+  compLeftTab.innerHTML = ''; compRightTab.innerHTML = '';
+  state.tabs.forEach((t, idx) => {
+    const optionHTML = `<option value="${t.id}">${escapeHtml(t.name || `Tab ${idx+1}`)}</option>`;
+    compLeftTab.innerHTML += optionHTML;
+    compRightTab.innerHTML += optionHTML;
+  });
+  updateCompScenarios(compLeftTab, compLeftScen);
+  updateCompScenarios(compRightTab, compRightScen);
+}
+
+function updateCompScenarios(tabSelect, scenSelect) {
+  const t = state.tabs.find(x => x.id === tabSelect.value);
+  scenSelect.innerHTML = '';
+  if(t) {
+    t.scenarios.forEach((sc, idx) => {
+      const name = (sc.name || "").trim();
+      const label = name ? `Scenario ${idx+1} — ${name}` : `Scenario ${idx+1}`;
+      scenSelect.innerHTML += `<option value="${sc.id}">${escapeHtml(label)}</option>`;
+    });
+  }
+}
+
+function renderCompEv(scenSelect, evDiv) {
+   let found = null;
+   for(let t of state.tabs) {
+     let sc = t.scenarios.find(x => x.id === scenSelect.value);
+     if(sc) { found = sc; break; }
+   }
+   evDiv.innerHTML = found ? found.evidenceHtml : '<div style="color:var(--muted); font-style:italic;">No evidence found.</div>';
+}
+
+compLeftTab.addEventListener('change', () => { updateCompScenarios(compLeftTab, compLeftScen); renderCompEv(compLeftScen, compLeftEv); });
+compLeftScen.addEventListener('change', () => { renderCompEv(compLeftScen, compLeftEv); });
+
+compRightTab.addEventListener('change', () => { updateCompScenarios(compRightTab, compRightScen); renderCompEv(compRightScen, compRightEv); });
+compRightScen.addEventListener('change', () => { renderCompEv(compRightScen, compRightEv); });
+
+compareBtn.addEventListener('click', () => {
+  populateCompareSelects();
+  if(state.tabs.length > 0) {
+    renderCompEv(compLeftScen, compLeftEv);
+    renderCompEv(compRightScen, compRightEv);
+  }
+  compBackdrop.style.display = 'flex';
+});
+
+compCloseBtn.addEventListener('click', () => { compBackdrop.style.display = 'none'; });
+
+// Sync Scroll
+const compSync = document.getElementById('compSync');
+let isSyncingLeft = false, isSyncingRight = false;
+
+compLeftEv.addEventListener('scroll', () => {
+   if(!compSync.checked || isSyncingLeft) { isSyncingLeft = false; return; }
+   isSyncingRight = true;
+   const percentage = compLeftEv.scrollTop / (compLeftEv.scrollHeight - compLeftEv.clientHeight || 1);
+   compRightEv.scrollTop = percentage * (compRightEv.scrollHeight - compRightEv.clientHeight);
+});
+
+compRightEv.addEventListener('scroll', () => {
+   if(!compSync.checked || isSyncingRight) { isSyncingRight = false; return; }
+   isSyncingLeft = true;
+   const percentage = compRightEv.scrollTop / (compRightEv.scrollHeight - compRightEv.clientHeight || 1);
+   compLeftEv.scrollTop = percentage * (compLeftEv.scrollHeight - compLeftEv.clientHeight);
 });
 
 // Create File Dialog
@@ -671,7 +786,7 @@ cfOk.addEventListener('click', () => {
     reader.onload = () => {
       const dataUrl = reader.result; 
       const html = `<span class="attachment" contenteditable="false"><a href="${dataUrl}" download="${name}" data-name="${name}" data-dataurl="${dataUrl}">📝 ${name}</a><span class="copy-att" title="Copy file" data-copy="${dataUrl}" contenteditable="false">📋</span></span>&nbsp;`;
-      restoreSelectionAndInsert(ev, html); // Insert directly at cursor
+      restoreSelectionAndInsert(ev, html);
     }; reader.readAsDataURL(blob);
   }
   cfBackdrop.style.display = 'none'; targetScenarioForFile = null;
@@ -774,7 +889,9 @@ exportHtmlBtn.addEventListener("click", () => {
     tab.scenarios.forEach((sc, sIdx) => {
       const sLabel = document.createElement("label"); sLabel.className = "export-scen-label";
       const sCheck = document.createElement("input"); sCheck.type = "checkbox"; sCheck.checked = true; sCheck.dataset.tabId = tab.id; sCheck.dataset.scenId = sc.id;
-      sLabel.appendChild(sCheck); sLabel.appendChild(document.createTextNode(sc.name ? `${sIdx+1}. ${sc.name}` : `Scenario ${sIdx+1}`)); sList.appendChild(sLabel);
+      
+      const sName = (sc.name || "").trim();
+      sLabel.appendChild(sCheck); sLabel.appendChild(document.createTextNode(sName ? `${sIdx+1}. ${sName}` : `Scenario ${sIdx+1}`)); sList.appendChild(sLabel);
     });
 
     tCheck.addEventListener("change", (e) => { sList.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = e.target.checked); });
@@ -851,7 +968,7 @@ document.addEventListener("click", (e) => {
     e.preventDefault(); const cmd = cmdBtn.dataset.cmd; const val = cmdBtn.dataset.val || null;
     document.execCommand(cmd, false, val); updateToolbarState(); 
     const ev = cmdBtn.closest('.evidence-wrap').querySelector('.evidence');
-    if (ev) persistEvidence(ev); // BUG FIX: Forces WYSIWYG button clicks to save immediately
+    if (ev) persistEvidence(ev);
     return;
   }
 
@@ -872,13 +989,13 @@ document.addEventListener("paste", (e) => {
   const files = [...dt.files || []]; const imgFile = files.find(f => f.type && f.type.startsWith("image/"));
   if (imgFile){ 
       e.preventDefault(); 
-      const sel = window.getSelection(); if (sel.rangeCount > 0) savedRange = sel.getRangeAt(0); // Save exact range before async read
+      const sel = window.getSelection(); if (sel.rangeCount > 0) savedRange = sel.getRangeAt(0); 
       insertImageFileIntoEvidence(imgFile, ev); 
       return; 
   }
 });
 
-// QUICK COPY ATTACHMENT LOGIC (Copies the entire HTML node for pasting)
+// QUICK COPY ATTACHMENT LOGIC
 document.addEventListener("click", async (e) => {
   const copyBtn = e.target.closest(".copy-att");
   if (copyBtn) {
@@ -901,7 +1018,6 @@ document.addEventListener("click", async (e) => {
         throw new Error("ClipboardItem not supported");
       }
     } catch(err) {
-      // Fallback for file:// context or older browsers
       const temp = document.createElement("div");
       temp.contentEditable = "true";
       temp.innerHTML = attachmentSpan.outerHTML + "&nbsp;";
@@ -958,6 +1074,7 @@ document.addEventListener("keydown", (e) => {
       document.getElementById("cfBackdrop").style.display === "flex" ||
       document.getElementById("exportBackdrop").style.display === "flex" ||
       document.getElementById("importBackdrop").style.display === "flex" ||
+      document.getElementById("compareBackdrop").style.display === "flex" ||
       document.getElementById("filePreviewBackdrop").style.display === "flex" ||
       document.getElementById("imgPreviewBackdrop").style.display === "flex") {
       
@@ -968,6 +1085,7 @@ document.addEventListener("keydown", (e) => {
          document.getElementById("cfCancel").click();
          document.getElementById("exportCancelBtn").click();
          document.getElementById("importCancelBtn").click();
+         document.getElementById("compCloseBtn").click();
          document.getElementById("fpCloseBtn").click();
          document.getElementById("imgPreviewBackdrop").style.display = "none";
       }
@@ -986,6 +1104,7 @@ document.addEventListener("keydown", (e) => {
     if (key === 't') { e.preventDefault(); promptNewTab(); }
     if (key === 'c') { e.preventDefault(); document.getElementById("themeBtn").click(); }
     if (key === 'h') { e.preventDefault(); document.getElementById("helpBtn").click(); }
+    if (key === 'v') { e.preventDefault(); document.getElementById("compareBtn").click(); }
     if (key === 'f') { 
       e.preventDefault(); let sc = null;
       if (lastFocusedScenarioId) sc = findScenario(lastFocusedScenarioId);
@@ -1030,7 +1149,7 @@ function openFilePicker(sid){
     r.onload = () => {
       const dataUrl = r.result; 
       const html = `<span class="attachment" contenteditable="false"><a href="${dataUrl}" download="${f.name}" data-name="${f.name}" data-dataurl="${dataUrl}">📎 ${f.name}</a><span class="copy-att" title="Copy file" data-copy="${dataUrl}" contenteditable="false">📋</span></span>&nbsp;`;
-      restoreSelectionAndInsert(ev, html); // Insert inline
+      restoreSelectionAndInsert(ev, html);
       input.value = ""; 
     }; r.readAsDataURL(f);
   }; input.click();
@@ -1040,7 +1159,7 @@ function insertImageFileIntoEvidence(file, ev, altText){
   const r = new FileReader();
   r.onload = () => {
     const html = `<img src="${r.result}" alt="${altText || 'evidence image'}" style="width:100%;" data-w="100" contenteditable="false" />&nbsp;`;
-    restoreSelectionAndInsert(ev, html); // Insert inline
+    restoreSelectionAndInsert(ev, html);
   }; r.readAsDataURL(file);
 }
 
@@ -1130,7 +1249,7 @@ function exportHTML(exportData){
     document.addEventListener("click", (e) => {
       const img = e.target.closest(".evidence img"); 
       if (img){ 
-        if(e.detail > 1) return; // Ignore double click
+        if(e.detail > 1) return; 
         clearTimeout(imgClickTimerExport);
         imgClickTimerExport = setTimeout(() => {
           let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%"; 
