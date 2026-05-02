@@ -338,12 +338,33 @@
   }
   .attachment a{ color: var(--primary); text-decoration:none; font-weight: 650; font-size: 13px; word-break: break-all; }
   .attachment a:hover{ text-decoration: underline; }
+  .attachment-name { flex: 1; font-weight: 650; font-size: 13px; color: var(--primary); word-break: break-all; user-select: none; }
 
   .evidence img{
     max-width: 100%; height: auto; cursor: nwse-resize;
     border-radius: 12px; margin-top: 8px;
     box-shadow: var(--shadow-2); transition: width .15s ease;
   }
+  
+  .img-wrap {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    margin-top: 8px;
+    transition: width .15s ease;
+  }
+  .img-wrap img { margin-top: 0 !important; display: block; }
+  .img-preview-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 6px 8px !important;
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease, transform 0.15s ease;
+    box-shadow: var(--shadow-2) !important;
+  }
+  .img-wrap:hover .img-preview-btn { opacity: 1; }
 
   @media (max-width: 600px){
     .appbar { height: auto; min-height: 60px; padding: 10px 0;} 
@@ -466,6 +487,21 @@
       </div>
       <div class="dlg-actions">
         <button class="btn" id="themeClose">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preview Dialog -->
+  <div class="dlg-backdrop" id="previewBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 800px; width: 90%;">
+      <div class="dlg-head" id="previewTitle">Preview</div>
+      <div class="dlg-body" id="previewBody" style="max-height: 70vh; overflow-y: auto; text-align: left; padding: 16px; background: var(--surface-2);"></div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="previewClose">Close</button>
+        <button class="btn" id="previewDownload">
+          <svg style="margin-right:4px; vertical-align:text-bottom;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+          Download
+        </button>
       </div>
     </div>
   </div>
@@ -786,6 +822,20 @@ document.addEventListener("click", (e) => {
     if(sc) { sc.fields = sc.fields.filter(f => f.id !== delF.dataset.delfield); render(); }
     return;
   }
+
+  const preview = e.target.closest("[data-preview]");
+  if (preview) {
+    e.preventDefault();
+    openPreview(preview.dataset.preview, preview.dataset.name);
+    return;
+  }
+
+  const download = e.target.closest("[data-download]");
+  if (download) {
+    e.preventDefault();
+    triggerDownload(download.dataset.download, download.dataset.name);
+    return;
+  }
 });
 
 document.addEventListener("paste", (e) => {
@@ -804,12 +854,27 @@ document.addEventListener("paste", (e) => {
 });
 
 document.addEventListener("click", (e) => {
+  if (e.target.closest(".img-preview-btn") || e.target.closest("[data-preview]")) return;
+
   const img = e.target.closest(".evidence img");
   if (!img) return;
   let w = Number(img.dataset.w || 100);
   w = (w <= 40) ? 100 : (w - 20);
   img.dataset.w = String(w);
-  img.style.width = w + "%";
+  
+  const wrap = img.closest(".img-wrap");
+  if (wrap) {
+    wrap.style.width = w + "%";
+    img.style.width = "100%";
+  } else {
+    img.style.width = w + "%";
+  }
+});
+
+document.addEventListener("dblclick", (e) => {
+  const img = e.target.closest(".evidence img");
+  if (!img) return;
+  openPreview(img.src, img.alt || "Image Preview");
 });
 
 document.addEventListener("click", (e) => {
@@ -824,10 +889,12 @@ document.addEventListener("click", (e) => {
 /* ========= Global Keyboard Shortcuts ========= */
 document.addEventListener("keydown", (e) => {
   if (document.getElementById("dlgBackdrop").style.display === "flex" || 
-      document.getElementById("themeBackdrop").style.display === "flex") {
+      document.getElementById("themeBackdrop").style.display === "flex" ||
+      document.getElementById("previewBackdrop").style.display === "flex") {
       if (e.key === "Escape") {
          document.getElementById("dlgCancel").click();
          document.getElementById("themeClose").click();
+         document.getElementById("previewClose").click();
       }
       return; 
   }
@@ -949,14 +1016,33 @@ function openFilePicker(sid){
       wrap.className = "attachment";
       wrap.contentEditable = "false";
       
-      const link = document.createElement("a");
-      link.textContent = "📎 " + f.name;
-      link.download = f.name;
-      link.dataset.name = f.name;
-      link.dataset.dataurl = dataUrl;
-      link.href = dataUrl;
+      const nameEl = document.createElement("div");
+      nameEl.className = "attachment-name";
+      nameEl.textContent = "📎 " + f.name;
+      wrap.appendChild(nameEl);
 
-      wrap.appendChild(link);
+      const isViewable = f.type.startsWith("image/") || f.type.startsWith("text/") || f.type === "application/json";
+      if (isViewable) {
+        const previewBtn = document.createElement("button");
+        previewBtn.type = "button";
+        previewBtn.className = "btn secondary action-btn";
+        previewBtn.style.padding = "4px 8px";
+        previewBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+        previewBtn.title = "Preview";
+        previewBtn.dataset.preview = dataUrl;
+        previewBtn.dataset.name = f.name;
+        wrap.appendChild(previewBtn);
+      }
+      
+      const downloadBtn = document.createElement("button");
+      downloadBtn.type = "button";
+      downloadBtn.className = "btn secondary action-btn";
+      downloadBtn.style.padding = "4px 8px";
+      downloadBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>`;
+      downloadBtn.title = "Download";
+      downloadBtn.dataset.download = dataUrl;
+      downloadBtn.dataset.name = f.name;
+      wrap.appendChild(downloadBtn);
       ev.appendChild(wrap);
       ev.appendChild(document.createTextNode('\u00A0'));
       persistEvidence(ev);
@@ -971,13 +1057,27 @@ function openFilePicker(sid){
 function insertImageFileIntoEvidence(file, ev, altText){
   const r = new FileReader();
   r.onload = () => {
+    const wrap = document.createElement("span");
+    wrap.className = "img-wrap";
+    wrap.contentEditable = "false";
+    wrap.style.width = "100%";
+    
     const img = document.createElement("img");
     img.src = r.result; 
     img.alt = altText || "evidence image";
     img.style.width = "100%";
     img.dataset.w = "100";
-    img.contentEditable = "false";
-    ev.appendChild(img);
+    
+    const btn = document.createElement("button");
+    btn.className = "btn secondary action-btn img-preview-btn";
+    btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>`;
+    btn.title = "Preview Image";
+    btn.dataset.preview = r.result;
+    btn.dataset.name = altText || "Image Preview";
+    
+    wrap.appendChild(img);
+    wrap.appendChild(btn);
+    ev.appendChild(wrap);
     ev.appendChild(document.createTextNode('\u00A0'));
     persistEvidence(ev);
     moveCursorToEnd(ev);
@@ -1102,15 +1202,20 @@ function exportHTML(){
 
       const img = e.target.closest(".evidence img");
       if (img){
+        if (e.target.closest(".img-preview-btn") || e.target.closest("[data-preview]")) return;
         let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20);
-        img.dataset.w = String(w); img.style.width = w + "%"; return;
+        img.dataset.w = String(w); 
+        const wrap = img.closest(".img-wrap");
+        if (wrap) { wrap.style.width = w + "%"; img.style.width = "100%"; }
+        else { img.style.width = w + "%"; }
+        return;
       }
 
-      const a = e.target.closest("a[data-dataurl]");
+      const a = e.target.closest("a[data-dataurl], [data-download]");
       if (!a) return;
       e.preventDefault();
-      const dataurl = a.dataset.dataurl;
-      if (!dataurl) return;
+      const dataurl = a.dataset.dataurl || a.dataset.download;
+      if (!dataurl || !dataurl.startsWith("data:")) return;
       const name = a.dataset.name || a.getAttribute("download") || "attachment";
       
       const parts = dataurl.split(",");
@@ -1147,6 +1252,74 @@ function exportHTML(){
   document.body.appendChild(a);
   a.click();
   setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+}
+
+/* ========= Preview Modal (Lightbox) ========= */
+const previewBackdrop = document.getElementById("previewBackdrop");
+const previewTitle = document.getElementById("previewTitle");
+const previewBody = document.getElementById("previewBody");
+const previewClose = document.getElementById("previewClose");
+const previewDownload = document.getElementById("previewDownload");
+let currentPreviewData = null;
+let currentPreviewName = null;
+
+function openPreview(dataUrl, name) {
+  currentPreviewData = dataUrl;
+  currentPreviewName = name;
+  previewTitle.textContent = name || "Preview";
+  previewBody.innerHTML = "";
+  
+  if (dataUrl.startsWith("data:image/") || !dataUrl.startsWith("data:")) {
+    const img = document.createElement("img");
+    img.src = dataUrl;
+    img.style.maxWidth = "100%";
+    img.style.display = "block";
+    img.style.margin = "0 auto";
+    img.style.borderRadius = "8px";
+    previewBody.appendChild(img);
+  } else {
+    const sizeInBytes = Math.round((dataUrl.length - dataUrl.indexOf(',') - 1) * 3 / 4);
+    if (sizeInBytes > 5 * 1024 * 1024) {
+      previewBody.innerHTML = `<div style="text-align:center; padding: 40px 20px; color: var(--muted); font-size: 15px;">File is too large to preview (limit 5 MB).<br><br>Please use the Download button below.</div>`;
+    } else {
+      try {
+        const parts = dataUrl.split(",");
+        const b64 = parts[1] || "";
+        const text = decodeURIComponent(escape(atob(b64))); 
+        const pre = document.createElement("pre");
+        pre.textContent = text;
+        pre.style.margin = "0";
+        pre.style.whiteSpace = "pre-wrap";
+        pre.style.wordBreak = "break-all";
+        pre.style.fontFamily = "monospace";
+        previewBody.appendChild(pre);
+      } catch (err) {
+        previewBody.innerHTML = "<div>Preview not available for this file format.</div>";
+      }
+    }
+  }
+  previewBackdrop.style.display = "flex";
+}
+
+previewClose.addEventListener("click", () => { previewBackdrop.style.display = "none"; });
+previewDownload.addEventListener("click", () => { triggerDownload(currentPreviewData, currentPreviewName); });
+previewBackdrop.addEventListener("click", (e) => { if (e.target === previewBackdrop) previewBackdrop.style.display = "none"; });
+
+function triggerDownload(dataurl, name) {
+  if (!dataurl || !dataurl.startsWith("data:")) return;
+  const parts = dataurl.split(",");
+  const meta = parts[0] || ""; const b64 = parts[1] || "";
+  const m = /data:(.*?);base64/.exec(meta);
+  const mime = (m && m[1]) ? m[1] : "application/octet-stream";
+  const bin = atob(b64);
+  const arr = new Uint8Array(bin.length);
+  for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+  const blob = new Blob([arr], {type:mime});
+  const url = URL.createObjectURL(blob);
+  const tmp = document.createElement("a");
+  tmp.href = url; tmp.download = name || "download";
+  document.body.appendChild(tmp); tmp.click();
+  setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
 }
 
 /* ========= Dialog utility ========= */
