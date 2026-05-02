@@ -194,10 +194,12 @@
         <button class="btn secondary" id="themeBtn">🎨 Theme</button>
         <button class="btn secondary" id="helpBtn">❓ Help</button> 
         <button class="btn secondary" id="renameTabBtn">✏️ Rename Tab</button>
-        <button class="btn" id="addScenarioBtn">➕ Add Scenario</button>
         <button class="btn secondary" id="importBtn">⬆️ Import</button>
         <input type="file" id="importInput" accept=".html" hidden />
-        <button class="btn secondary" id="exportHtmlBtn" style="border-color: var(--primary); color: var(--primary);">⬇ Export Report</button>
+        
+        <!-- Primary Actions Grouped Together -->
+        <button class="btn" id="addScenarioBtn">➕ Add Scenario</button>
+        <button class="btn" id="exportHtmlBtn">⬇ Export Report</button>
       </div>
     </div>
   </header>
@@ -351,7 +353,7 @@ document.querySelectorAll('[data-set-theme]').forEach(el => { el.addEventListene
 document.querySelectorAll('[data-set-color]').forEach(el => { el.addEventListener('click', (e) => { currentColor = e.target.dataset.setColor; applyTheme(); }); });
 
 /* ========= State & Storage ========= */
-const STORAGE_KEY = "test_recorder_tabs_v9";
+const STORAGE_KEY = "test_recorder_tabs_v10";
 let lastFocusedScenarioId = null; 
 let targetScenarioForFile = null; 
 
@@ -495,7 +497,6 @@ function updateToolbarState() {
   }
 }
 document.addEventListener("selectionchange", updateToolbarState);
-
 
 // Track Focus for Global Shortcuts
 document.addEventListener("focusin", (e) => {
