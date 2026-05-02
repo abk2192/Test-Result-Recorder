@@ -112,13 +112,24 @@
 
   /* Simplified WYSIWYG */
   .wysiwyg-toolbar { display: flex; gap: 4px; margin-bottom: 6px; align-items: center; flex-wrap: wrap; }
-  .wysiwyg-toolbar .btn { padding: 4px 8px; font-size: 12px; font-weight: 700; border-radius: 6px; }
+  .wysiwyg-toolbar .btn { padding: 4px 8px; font-size: 12px; font-weight: 700; border-radius: 6px; transition: all 0.2s ease; }
+  
+  /* Active Indicator for Toolbar Buttons */
+  .wysiwyg-toolbar .btn.active-format {
+    background: var(--primary-light) !important;
+    color: var(--primary) !important;
+    border-color: var(--primary) !important;
+  }
 
   .evidence-wrap{ margin-top: 16px; }
-  .evidence{ border: 1px dashed var(--outline-2); background: var(--evidence-bg); color: var(--text); border-radius: var(--r12); padding: 12px; min-height: 130px; outline:none; line-height: 1.4; transition: all 0.3s ease; }
+  .evidence{ border: 1px dashed var(--outline-2); background: var(--evidence-bg); color: var(--text); border-radius: var(--r12); padding: 12px; min-height: 130px; outline:none; line-height: 1.5; transition: all 0.3s ease; }
   .evidence:focus{ border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); background: var(--input-bg); }
   .evidence p { margin: 0 0 8px 0; }
-  .evidence ul { margin: 0 0 8px 0; padding-left: 20px; }
+  
+  /* Proper List CSS for Evidence Box */
+  .evidence ul { margin: 0 0 8px 0; padding-left: 24px; list-style-type: disc; }
+  .evidence ol { margin: 0 0 8px 0; padding-left: 24px; list-style-type: decimal; }
+  .evidence li { margin-bottom: 4px; }
   
   .hint{ font-size: 12px; color: var(--muted); margin-top: 6px; }
 
@@ -170,7 +181,7 @@
     <div class="appbar-inner">
       <div class="title">
         <div class="badge">
-          <!-- New Clean Clipboard Icon -->
+          <!-- Clean Clipboard Icon -->
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <path d="M14 2v6h6"></path>
@@ -340,7 +351,7 @@ document.querySelectorAll('[data-set-theme]').forEach(el => { el.addEventListene
 document.querySelectorAll('[data-set-color]').forEach(el => { el.addEventListener('click', (e) => { currentColor = e.target.dataset.setColor; applyTheme(); }); });
 
 /* ========= State & Storage ========= */
-const STORAGE_KEY = "test_recorder_tabs_v8";
+const STORAGE_KEY = "test_recorder_tabs_v9";
 let lastFocusedScenarioId = null; 
 let targetScenarioForFile = null; 
 
@@ -456,6 +467,36 @@ function renderScenarioCard(sc, idx){
 
 /* ========= Interactions ========= */
 
+// Focus interceptor: Stops toolbar buttons from stealing cursor focus
+document.addEventListener("mousedown", (e) => {
+  if (e.target.closest('[data-cmd]')) { e.preventDefault(); }
+});
+
+// Update toolbar active states dynamically
+function updateToolbarState() {
+  document.querySelectorAll('.wysiwyg-toolbar .btn').forEach(b => b.classList.remove('active-format'));
+  const sel = window.getSelection();
+  if (!sel.rangeCount) return;
+  let node = sel.anchorNode;
+  if (!node) return;
+  if (node.nodeType === 3) node = node.parentElement;
+  
+  const ev = node.closest('.evidence');
+  if (ev) {
+    const toolbar = ev.previousElementSibling;
+    if (toolbar && toolbar.classList.contains('wysiwyg-toolbar')) {
+       ['bold', 'italic', 'insertUnorderedList'].forEach(cmd => {
+          if (document.queryCommandState(cmd)) {
+             const btn = toolbar.querySelector(`[data-cmd="${cmd}"]`);
+             if (btn) btn.classList.add('active-format');
+          }
+       });
+    }
+  }
+}
+document.addEventListener("selectionchange", updateToolbarState);
+
+
 // Track Focus for Global Shortcuts
 document.addEventListener("focusin", (e) => {
   const scWrapper = e.target.closest(".scenario");
@@ -484,7 +525,7 @@ document.addEventListener("dblclick", (e) => {
   if (img) {
     document.getElementById("imgPreviewEl").src = img.src;
     imgBackdrop.style.display = "flex";
-    window.getSelection().removeAllRanges(); // Clear selection caused by double clicking
+    window.getSelection().removeAllRanges(); 
   }
 });
 
@@ -608,6 +649,7 @@ document.addEventListener("click", (e) => {
   if (cmdBtn) {
     e.preventDefault(); const cmd = cmdBtn.dataset.cmd; const val = cmdBtn.dataset.val || null;
     document.execCommand(cmd, false, val);
+    updateToolbarState(); // Instantly visually confirm action
     const ev = cmdBtn.closest('.evidence-wrap').querySelector('.evidence');
     if (ev) ev.dispatchEvent(new Event('input', {bubbles: true}));
     return;
@@ -715,7 +757,7 @@ document.addEventListener("keydown", (e) => {
     if (key === 'r') { e.preventDefault(); document.getElementById("renameTabBtn").click(); }
     if (key === 't') { e.preventDefault(); promptNewTab(); }
     if (key === 'c') { e.preventDefault(); document.getElementById("themeBtn").click(); }
-	if (key === 'h') { e.preventDefault(); document.getElementById("helpBtn").click(); }
+    if (key === 'h') { e.preventDefault(); document.getElementById("helpBtn").click(); }
     if (key === 'f') { 
       e.preventDefault(); let sc = null;
       if (lastFocusedScenarioId) sc = findScenario(lastFocusedScenarioId);
