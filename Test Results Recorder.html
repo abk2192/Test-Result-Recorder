@@ -85,30 +85,10 @@
   .summary-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
   .summary-sub{ font-size: 12px; color: var(--muted); }
   
-  /* NEW INLINE HEADER INPUT */
-  .header-name-input {
-    flex: 1;
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 6px;
-    padding: 4px 8px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 750;
-    color: var(--text);
-    transition: all 0.2s ease;
-    min-width: 150px;
-    outline: none;
-  }
-  .header-name-input:hover {
-    background: var(--surface-2);
-    border-color: var(--outline);
-  }
-  .header-name-input:focus {
-    background: var(--input-bg);
-    border-color: var(--primary);
-    box-shadow: 0 0 0 3px var(--primary-light);
-  }
+  /* INLINE HEADER INPUT */
+  .header-name-input { flex: 1; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 8px; font-family: inherit; font-size: 14px; font-weight: 750; color: var(--text); transition: all 0.2s ease; min-width: 150px; outline: none; }
+  .header-name-input:hover { background: var(--surface-2); border-color: var(--outline); }
+  .header-name-input:focus { background: var(--input-bg); border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
   .header-name-input::placeholder { color: var(--muted); opacity: 0.6; font-weight: 500; }
 
   .summary-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
@@ -135,10 +115,9 @@
   .input{ width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--outline); background: var(--input-bg); color: var(--text); outline: none; transition: all .15s ease; font-size: 13px; }
   .input:focus{ border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
 
-  /* Simplified WYSIWYG */
+  /* WYSIWYG */
   .wysiwyg-toolbar { display: flex; gap: 4px; margin-bottom: 6px; align-items: center; flex-wrap: wrap; }
   .wysiwyg-toolbar .btn { padding: 4px 8px; font-size: 12px; font-weight: 700; border-radius: 6px; transition: all 0.2s ease; }
-  
   .wysiwyg-toolbar .btn.active-format { background: var(--primary-light) !important; color: var(--primary) !important; border-color: var(--primary) !important; }
 
   .evidence-wrap{ margin-top: 16px; }
@@ -151,11 +130,22 @@
   
   .hint{ font-size: 12px; color: var(--muted); margin-top: 6px; }
 
-  .attachment{ margin-top: 8px; display:inline-flex; align-items:center; gap: 10px; padding: 10px 12px; border-radius: 12px; border: 1px solid var(--outline-2); background: var(--surface-2); margin-right: 8px; }
+  /* Attachments & Quick Copy */
+  .attachment{ margin-top: 8px; display:inline-flex; align-items:center; gap: 8px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--outline-2); background: var(--surface-2); margin-right: 8px; vertical-align: middle; }
   .attachment a{ color: var(--primary); text-decoration:none; font-weight: 650; font-size: 13px; word-break: break-all; cursor: pointer; }
   .attachment a:hover{ text-decoration: underline; }
+  .copy-att { cursor: pointer; opacity: 0.5; transition: opacity 0.2s; font-size: 15px; user-select: none; padding: 2px; margin-left: 4px; border-left: 1px solid var(--outline); padding-left: 8px;}
+  .copy-att:hover { opacity: 1; }
 
-  .evidence img{ max-width: 100%; height: auto; cursor: nwse-resize; border-radius: 12px; margin-top: 8px; box-shadow: var(--shadow-2); transition: width .15s ease; }
+  .evidence img{ max-width: 100%; height: auto; cursor: nwse-resize; border-radius: 12px; margin-top: 8px; box-shadow: var(--shadow-2); transition: width .15s ease; vertical-align: middle; }
+
+  /* Import / Export Specifics */
+  .export-tab-group { margin-bottom: 12px; border-bottom: 1px solid var(--outline-2); padding-bottom: 12px;}
+  .export-tab-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+  .export-tab-label { font-weight: 700; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; color: var(--text); cursor: pointer; }
+  .export-scen-list { padding-left: 26px; display: flex; flex-direction: column; gap: 8px; }
+  .export-scen-label { font-size: 13px; display: flex; align-items: flex-start; gap: 10px; color: var(--muted); cursor: pointer;}
+  input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; margin-top: 2px;}
 
   @media (max-width: 650px){
     .appbar { height: auto; min-height: 60px; padding: 10px 0;} 
@@ -167,7 +157,7 @@
 
   /* Dialogs */
   .dlg-backdrop{ position: fixed; inset:0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 100; }
-  .dlg{ width: min(520px, 100%); background: var(--surface); border-radius: 18px; border: 1px solid var(--outline-2); box-shadow: var(--shadow); overflow:hidden; display: flex; flex-direction: column; }
+  .dlg{ width: min(520px, 100%); background: var(--surface); border-radius: 18px; border: 1px solid var(--outline-2); box-shadow: var(--shadow); overflow:hidden; display: flex; flex-direction: column; max-height: 90vh; }
   .dlg-head{ padding: 14px 16px; border-bottom: 1px solid var(--outline-2); font-weight: 800; font-size: 16px; color: var(--text); flex-shrink: 0;}
   .dlg-body{ padding: 14px 16px; color: var(--text); overflow-y: auto; }
   .dlg-actions{ padding: 12px 16px; border-top: 1px solid var(--outline-2); display:flex; justify-content:flex-end; gap: 8px; flex-shrink: 0;}
@@ -182,7 +172,7 @@
   .color-swatch:hover { transform: scale(1.1); }
   .color-swatch.active { border-color: var(--text); }
 
-  /* Help Docs Styling */
+  /* Help Docs */
   .help-list { padding-left: 20px; font-size: 13px; line-height: 1.6; color: var(--text); }
   .help-list li { margin-bottom: 8px; }
   .help-list b { color: var(--primary); }
@@ -249,6 +239,59 @@
     </div>
   </div>
 
+  <!-- Export Dialog (Level 2) -->
+  <div class="dlg-backdrop" id="exportBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 500px;">
+      <div class="dlg-head">📦 Export Options</div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom: 8px;">Select specific scenarios to export:</div>
+        <div id="exportChecklist" style="background: var(--surface-2); padding: 16px; border-radius: 8px; border: 1px solid var(--outline-2);"></div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="exportCancelBtn">Cancel</button>
+        <button class="btn" id="exportConfirmBtn">⬇ Download Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import / Merge Dialog -->
+  <div class="dlg-backdrop" id="importBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 500px;">
+      <div class="dlg-head">⬆️ Import Options</div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom: 12px; font-size: 14px;" id="importDetails">Found X tabs and Y scenarios. How would you like to load them?</div>
+        
+        <label class="export-tab-label" style="border: 1px solid var(--outline-2); padding: 12px; border-radius: 8px; transition: border-color 0.2s ease;">
+          <input type="radio" name="importMode" value="append" checked>
+          <div>
+            <div style="font-weight:700;">Append as New Tabs</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:400;">Adds the imported tabs safely alongside your current ones.</div>
+          </div>
+        </label>
+
+        <label class="export-tab-label" style="border: 1px solid var(--outline-2); padding: 12px; border-radius: 8px; transition: border-color 0.2s ease;">
+          <input type="radio" name="importMode" value="merge">
+          <div>
+            <div style="font-weight:700;">Merge into Active Tab</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:400;">Pours all imported scenarios directly into your currently open tab.</div>
+          </div>
+        </label>
+
+        <label class="export-tab-label" style="border: 1px solid var(--danger-border); padding: 12px; border-radius: 8px; transition: border-color 0.2s ease; background: var(--danger-hover);">
+          <input type="radio" name="importMode" value="replace">
+          <div>
+            <div style="font-weight:700; color:var(--danger);">Replace Current Session</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:400;">Wipes your current board entirely and loads the imported file exactly as it is.</div>
+          </div>
+        </label>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="importCancelBtn">Cancel</button>
+        <button class="btn" id="importConfirmBtn">Import Data</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Create File Dialog -->
   <div class="dlg-backdrop" id="cfBackdrop" role="dialog" aria-modal="true">
     <div class="dlg" style="max-width: 600px;">
@@ -272,6 +315,7 @@
       <div class="dlg-head" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
         <span id="fpTitle" style="word-break: break-all;">File Preview</span>
         <div>
+          <button class="btn secondary" id="fpCopyBtn" style="padding: 6px 12px; margin-right: 8px;">📋 Copy Text</button>
           <button class="btn" id="fpDownloadBtn" style="padding: 6px 12px; margin-right: 8px;">⬇ Download</button>
           <button class="btn secondary" id="fpCloseBtn" style="padding: 6px 12px;">Close</button>
         </div>
@@ -318,10 +362,10 @@
       <div class="dlg-body">
         <ul class="help-list" style="margin-bottom: 20px;">
           <li><b>Header Editing:</b> Click directly on a scenario's name in the header to edit it instantly.</li>
-          <li><b>Dynamic Fields:</b> Click "+ Add Field" to track custom variables like Environment or Browser. They display as tags when collapsed.</li>
           <li><b>Evidence Formatting:</b> The Evidence toolbar lets you apply Bold, Italics, and Bullet Lists to structure your notes.</li>
-          <li><b>File Previews:</b> Clicking an attached text/SQL/JSON file opens a clean reading window. <b>Double-clicking</b> an image opens it in full-screen.</li>
-          <li><b>Attachments & Files:</b> Paste images directly, upload files with "📎 Attach", or click "📝 New File" to instantly generate and attach logs.</li>
+          <li><b>File Previews & Copying:</b> Clicking an attached text file opens a reading window where you can copy the text. Clicking the 📋 icon next to any attachment copies the entire file block so you can paste it exactly where your cursor is in another scenario.</li>
+          <li><b>Selective Export:</b> Click "⬇ Export" to pick exactly which tabs and scenarios you want to share with your team.</li>
+          <li><b>Smart Import:</b> Load a colleague's exported file and choose to merge it into your active session without losing your own work. Imported scenarios are clearly tagged.</li>
         </ul>
         <hr style="border:0; border-top: 1px solid var(--outline-2); margin: 15px 0;">
         <div style="font-weight: 700; margin-bottom: 10px; font-size: 14px;">⚡ Super User Mode (Keyboard Shortcuts)</div>
@@ -331,9 +375,7 @@
           <li><span class="kbd">Alt</span> + <span class="kbd">T</span> : New Tab</li>
           <li><span class="kbd">Alt</span> + <span class="kbd">R</span> : Rename Active Tab</li>
           <li><span class="kbd">Alt</span> + <span class="kbd">N</span> : Add Scenario</li>
-          <li><span class="kbd">Alt</span> + <span class="kbd">F</span> : Add Field (Adds to the focused scenario)</li>
-          <li><span class="kbd">Alt</span> + <span class="kbd">C</span> : Open Theme Menu</li>
-          <li><span class="kbd">Alt</span> + <span class="kbd">H</span> : Open this Help Menu</li>
+          <li><span class="kbd">Alt</span> + <span class="kbd">F</span> : Add Field</li>
         </ul>
       </div>
       <div class="dlg-actions">
@@ -369,9 +411,11 @@ document.querySelectorAll('[data-set-theme]').forEach(el => { el.addEventListene
 document.querySelectorAll('[data-set-color]').forEach(el => { el.addEventListener('click', (e) => { currentColor = e.target.dataset.setColor; applyTheme(); }); });
 
 /* ========= State & Storage ========= */
-const STORAGE_KEY = "test_recorder_tabs_v11"; // Incremented for structure change
+const STORAGE_KEY = "test_recorder_tabs_v15"; 
 let lastFocusedScenarioId = null; 
 let targetScenarioForFile = null; 
+let pendingImportData = null; 
+let savedRange = null; // Used to track exact cursor location for inserting files/images
 
 let state = loadState() || {
   activeTabId: null,
@@ -439,14 +483,12 @@ function renderScenarioCard(sc, idx){
     </div>
   `).join("");
 
-  // Replaced static title with inline header input
   d.innerHTML = `
     <summary>
       <div class="summary-content">
         <div style="display:flex; align-items:center; gap:6px; width: 100%;">
           <div style="font-weight: 750; font-size: 14px; color: var(--text); white-space:nowrap;">Scenario ${idx+1}</div>
           <span style="color: var(--muted); font-weight: 400;">—</span>
-          <!-- Inline Name Edit, stopping propagation on click so accordion doesn't toggle -->
           <input class="header-name-input" data-field="name" data-sid="${sc.id}" value="${escapeAttr(sc.name||"")}" placeholder="Test Case Name..." onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter') this.blur();" />
         </div>
         ${tagsHtml ? `<div class="summary-tags">${tagsHtml}</div>` : `<div class="summary-sub">Click to expand/collapse</div>`}
@@ -482,45 +524,70 @@ function renderScenarioCard(sc, idx){
 
   const evidence = d.querySelector(`[data-evidence="${sc.id}"]`);
   evidence.innerHTML = sc.evidenceHtml || "";
+
+  // == RETROACTIVE FIX: Inject missing copy buttons into old saved HTML ==
+  let htmlUpdated = false;
+  evidence.querySelectorAll('.attachment').forEach(att => {
+    if(!att.querySelector('.copy-att')) {
+      const link = att.querySelector('a');
+      if(link && link.dataset.dataurl) {
+        const copyBtn = document.createElement("span");
+        copyBtn.className = "copy-att"; copyBtn.textContent = "📋"; 
+        copyBtn.title = "Copy content"; copyBtn.dataset.copy = link.dataset.dataurl;
+        copyBtn.contentEditable = "false";
+        att.appendChild(copyBtn);
+        htmlUpdated = true;
+      }
+    }
+  });
+  if (htmlUpdated) { sc.evidenceHtml = evidence.innerHTML; saveState(); }
+
   return d;
 }
 
 /* ========= Interactions ========= */
 
-// Focus interceptor: Stops toolbar buttons from stealing cursor focus
-document.addEventListener("mousedown", (e) => {
-  if (e.target.closest('[data-cmd]')) { e.preventDefault(); }
-});
+document.addEventListener("mousedown", (e) => { if (e.target.closest('[data-cmd]')) { e.preventDefault(); } });
 
-// Update toolbar active states dynamically
 function updateToolbarState() {
   document.querySelectorAll('.wysiwyg-toolbar .btn').forEach(b => b.classList.remove('active-format'));
-  const sel = window.getSelection();
-  if (!sel.rangeCount) return;
-  let node = sel.anchorNode;
-  if (!node) return;
-  if (node.nodeType === 3) node = node.parentElement;
-  
+  const sel = window.getSelection(); if (!sel.rangeCount) return; let node = sel.anchorNode; if (!node) return; if (node.nodeType === 3) node = node.parentElement;
   const ev = node.closest('.evidence');
   if (ev) {
     const toolbar = ev.previousElementSibling;
     if (toolbar && toolbar.classList.contains('wysiwyg-toolbar')) {
        ['bold', 'italic', 'insertUnorderedList'].forEach(cmd => {
-          if (document.queryCommandState(cmd)) {
-             const btn = toolbar.querySelector(`[data-cmd="${cmd}"]`);
-             if (btn) btn.classList.add('active-format');
-          }
+          if (document.queryCommandState(cmd)) { const btn = toolbar.querySelector(`[data-cmd="${cmd}"]`); if (btn) btn.classList.add('active-format'); }
        });
     }
   }
 }
-document.addEventListener("selectionchange", updateToolbarState);
 
-// Track Focus for Global Shortcuts
-document.addEventListener("focusin", (e) => {
-  const scWrapper = e.target.closest(".scenario");
-  if (scWrapper) lastFocusedScenarioId = scWrapper.dataset.sid;
+// Track exactly where the cursor is for perfect file insertion
+document.addEventListener("selectionchange", () => {
+  updateToolbarState();
+  const sel = window.getSelection();
+  if (sel.rangeCount > 0) {
+    let node = sel.commonAncestorContainer;
+    if (node.nodeType === 3) node = node.parentNode;
+    if (node && node.closest && node.closest('.evidence')) { savedRange = sel.getRangeAt(0); }
+  }
 });
+
+function restoreSelectionAndInsert(ev, html) {
+  ev.focus();
+  if (savedRange && savedRange.commonAncestorContainer) {
+    let node = savedRange.commonAncestorContainer;
+    if (node.nodeType === 3) node = node.parentNode;
+    if (node && node.closest && node.closest('.evidence') === ev) {
+       const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+    } else { moveCursorToEnd(ev); }
+  } else { moveCursorToEnd(ev); }
+  document.execCommand("insertHTML", false, html);
+  persistEvidence(ev);
+}
+
+document.addEventListener("focusin", (e) => { const scWrapper = e.target.closest(".scenario"); if (scWrapper) lastFocusedScenarioId = scWrapper.dataset.sid; });
 
 // Help Dialog
 const helpBtn = document.getElementById("helpBtn");
@@ -533,17 +600,41 @@ helpBackdrop.addEventListener("click", (e) => { if(e.target === helpBackdrop) he
 // File Preview & Image Lightbox Modals
 const fpBackdrop = document.getElementById("filePreviewBackdrop");
 const fpCloseBtn = document.getElementById("fpCloseBtn");
+const fpCopyBtn = document.getElementById("fpCopyBtn");
 fpCloseBtn.addEventListener("click", () => { fpBackdrop.style.display = "none"; });
 fpBackdrop.addEventListener("click", (e) => { if(e.target === fpBackdrop) fpBackdrop.style.display = "none"; });
+
+fpCopyBtn.addEventListener("click", async () => {
+  try {
+    await navigator.clipboard.writeText(document.getElementById("fpContent").textContent);
+    const orig = fpCopyBtn.textContent; fpCopyBtn.textContent = "✅ Copied!";
+    setTimeout(() => { fpCopyBtn.textContent = orig; }, 1500);
+  } catch(err) { alert("Failed to copy text."); }
+});
 
 const imgBackdrop = document.getElementById("imgPreviewBackdrop");
 imgBackdrop.addEventListener("click", () => { imgBackdrop.style.display = "none"; });
 
+// BUG FIX: Double-Click vs Single Click Logic for Images
+let imgClickTimer = null;
+document.addEventListener("click", (e) => {
+  const img = e.target.closest(".evidence img"); if (!img) return;
+  if (e.detail > 1) return; // Prevent triggering on double click
+  
+  clearTimeout(imgClickTimer);
+  imgClickTimer = setTimeout(() => {
+    let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%";
+    const ev = img.closest('.evidence');
+    if (ev) persistEvidence(ev); // BUG FIX: Forces app to remember the new size
+  }, 200);
+});
+
 document.addEventListener("dblclick", (e) => {
   const img = e.target.closest(".evidence img");
-  if (img) {
-    document.getElementById("imgPreviewEl").src = img.src;
-    imgBackdrop.style.display = "flex";
+  if (img) { 
+    clearTimeout(imgClickTimer);
+    document.getElementById("imgPreviewEl").src = img.src; 
+    imgBackdrop.style.display = "flex"; 
     window.getSelection().removeAllRanges(); 
   }
 });
@@ -556,65 +647,91 @@ const cfCancel = document.getElementById('cfCancel');
 const cfOk = document.getElementById('cfOk');
 
 function openCreateFileDialog(sid) {
-  targetScenarioForFile = sid;
-  cfName.value = ''; cfContent.value = '';
-  cfBackdrop.style.display = 'flex';
-  setTimeout(() => cfName.focus(), 50);
+  targetScenarioForFile = sid; cfName.value = ''; cfContent.value = '';
+  cfBackdrop.style.display = 'flex'; setTimeout(() => cfName.focus(), 50);
 }
 cfCancel.addEventListener('click', () => { cfBackdrop.style.display = 'none'; targetScenarioForFile = null; });
 cfBackdrop.addEventListener('click', (e) => { if (e.target === cfBackdrop) cfCancel.click(); });
 cfOk.addEventListener('click', () => {
-  const name = cfName.value.trim() || 'document.txt';
-  const content = cfContent.value;
+  const name = cfName.value.trim() || 'document.txt'; const content = cfContent.value;
   if(!content) { alert("File content cannot be empty."); return; }
-
   const ev = document.querySelector(`.evidence[data-evidence="${targetScenarioForFile}"]`);
   if(ev) {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const reader = new FileReader();
+    const blob = new Blob([content], { type: 'text/plain' }); const reader = new FileReader();
     reader.onload = () => {
-      const dataUrl = reader.result;
-      const wrap = document.createElement("div");
-      wrap.className = "attachment"; wrap.contentEditable = "false";
-
-      const link = document.createElement("a");
-      link.textContent = "📝 " + name; link.download = name;
-      link.dataset.name = name; link.dataset.dataurl = dataUrl; link.href = dataUrl;
-
-      wrap.appendChild(link); ev.appendChild(wrap); ev.appendChild(document.createTextNode('\u00A0'));
-      persistEvidence(ev); moveCursorToEnd(ev);
-    };
-    reader.readAsDataURL(blob);
+      const dataUrl = reader.result; 
+      const html = `<span class="attachment" contenteditable="false"><a href="${dataUrl}" download="${name}" data-name="${name}" data-dataurl="${dataUrl}">📝 ${name}</a><span class="copy-att" title="Copy file" data-copy="${dataUrl}" contenteditable="false">📋</span></span>&nbsp;`;
+      restoreSelectionAndInsert(ev, html); // Insert directly at cursor
+    }; reader.readAsDataURL(blob);
   }
   cfBackdrop.style.display = 'none'; targetScenarioForFile = null;
 });
 
-// Import File
+// ========= IMPORT LOGIC (Smart Merge + Suffixes) =========
 const importBtn = document.getElementById("importBtn");
 const importInput = document.getElementById("importInput");
+const importBackdrop = document.getElementById("importBackdrop");
+const importCancelBtn = document.getElementById("importCancelBtn");
+const importConfirmBtn = document.getElementById("importConfirmBtn");
+
 importBtn.addEventListener("click", () => { importInput.click(); });
 importInput.addEventListener("change", (e) => {
-  const file = e.target.files[0];
-  if (!file) return;
+  const file = e.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = (event) => {
     try {
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(event.target.result, "text/html");
+      const parser = new DOMParser(); const doc = parser.parseFromString(event.target.result, "text/html");
       const payloadEl = doc.getElementById('data-payload');
       if (payloadEl) {
-        const importedState = JSON.parse(payloadEl.textContent);
-        if (importedState && importedState.tabs) {
-          state = importedState; render();
-          const htmlTag = doc.querySelector('html');
-          if(htmlTag && htmlTag.dataset.theme) { currentTheme = htmlTag.dataset.theme; currentColor = htmlTag.dataset.color || 'blue'; applyTheme(); }
-          alert("Test Report imported successfully!");
+        pendingImportData = JSON.parse(payloadEl.textContent);
+        if (pendingImportData && pendingImportData.tabs) {
+          const tCount = pendingImportData.tabs.length;
+          const sCount = pendingImportData.tabs.reduce((sum, t) => sum + t.scenarios.length, 0);
+          document.getElementById("importDetails").textContent = `Found ${tCount} tab(s) and ${sCount} scenario(s). How would you like to load them?`;
+          importBackdrop.style.display = "flex";
         } else { alert("Invalid test report format."); }
       } else { alert("No test data found in this HTML file."); }
     } catch (err) { alert("Error reading file."); }
     e.target.value = ""; 
   };
   reader.readAsText(file);
+});
+
+importCancelBtn.addEventListener("click", () => { importBackdrop.style.display = "none"; pendingImportData = null; });
+importBackdrop.addEventListener("click", (e) => { if(e.target === importBackdrop) importCancelBtn.click(); });
+
+importConfirmBtn.addEventListener("click", () => {
+  if(!pendingImportData) return;
+  const mode = document.querySelector('input[name="importMode"]:checked').value;
+  
+  if (mode === "replace") {
+    state = pendingImportData;
+  } 
+  else if (mode === "append") {
+    pendingImportData.tabs.forEach(t => {
+      const clonedTab = JSON.parse(JSON.stringify(t));
+      clonedTab.id = uid(); 
+      clonedTab.name = (clonedTab.name || "Untitled") + " - Imported";
+      clonedTab.scenarios.forEach(s => { 
+        s.id = uid(); 
+        if(s.name) s.name += " - Imported"; 
+      }); 
+      state.tabs.push(clonedTab);
+    });
+  } 
+  else if (mode === "merge") {
+    const activeT = activeTab();
+    pendingImportData.tabs.forEach(t => {
+      t.scenarios.forEach(s => {
+        const clonedScen = JSON.parse(JSON.stringify(s));
+        clonedScen.id = uid(); 
+        if(clonedScen.name) clonedScen.name += " - Imported";
+        activeT.scenarios.push(clonedScen);
+      });
+    });
+  }
+  
+  render(); importBackdrop.style.display = "none"; pendingImportData = null;
 });
 
 document.getElementById("addScenarioBtn").addEventListener("click", () => {
@@ -629,7 +746,64 @@ document.getElementById("renameTabBtn").addEventListener("click", () => {
   promptDialog("Rename tab", tab.name, "Give this tab a short name.", (val) => { tab.name = (val || "Untitled").trim(); render(); });
 });
 
-document.getElementById("exportHtmlBtn").addEventListener("click", exportHTML);
+// ========= EXPORT LOGIC (Level 2 Custom Selection) =========
+const exportHtmlBtn = document.getElementById("exportHtmlBtn");
+const exportBackdrop = document.getElementById("exportBackdrop");
+const exportCancelBtn = document.getElementById("exportCancelBtn");
+const exportConfirmBtn = document.getElementById("exportConfirmBtn");
+
+exportHtmlBtn.addEventListener("click", () => {
+  const list = document.getElementById("exportChecklist"); list.innerHTML = "";
+  state.tabs.forEach((tab, tIdx) => {
+    const group = document.createElement("div"); group.className = "export-tab-group";
+    const tLabel = document.createElement("label"); tLabel.className = "export-tab-label";
+    const tCheck = document.createElement("input"); tCheck.type = "checkbox"; tCheck.checked = true; tCheck.dataset.tabId = tab.id;
+    tLabel.appendChild(tCheck); tLabel.appendChild(document.createTextNode(tab.name || `Tab ${tIdx+1}`)); group.appendChild(tLabel);
+
+    const sList = document.createElement("div"); sList.className = "export-scen-list";
+    tab.scenarios.forEach((sc, sIdx) => {
+      const sLabel = document.createElement("label"); sLabel.className = "export-scen-label";
+      const sCheck = document.createElement("input"); sCheck.type = "checkbox"; sCheck.checked = true; sCheck.dataset.tabId = tab.id; sCheck.dataset.scenId = sc.id;
+      sLabel.appendChild(sCheck); sLabel.appendChild(document.createTextNode(sc.name ? `${sIdx+1}. ${sc.name}` : `Scenario ${sIdx+1}`)); sList.appendChild(sLabel);
+    });
+
+    tCheck.addEventListener("change", (e) => { sList.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = e.target.checked); });
+    sList.addEventListener("change", () => {
+      const all = sList.querySelectorAll('input[type="checkbox"]').length;
+      const checked = sList.querySelectorAll('input[type="checkbox"]:checked').length;
+      tCheck.checked = (all === checked && all > 0); tCheck.indeterminate = (checked > 0 && checked < all);
+    });
+    group.appendChild(sList); list.appendChild(group);
+  });
+  exportBackdrop.style.display = "flex";
+});
+
+exportCancelBtn.addEventListener("click", () => { exportBackdrop.style.display = "none"; });
+exportBackdrop.addEventListener("click", (e) => { if(e.target === exportBackdrop) exportCancelBtn.click(); });
+
+exportConfirmBtn.addEventListener("click", () => {
+  const filteredState = { activeTabId: null, tabs: [] };
+  const tabGroups = document.querySelectorAll('.export-tab-group');
+  tabGroups.forEach(group => {
+    const tCheck = group.querySelector('.export-tab-label input');
+    if (tCheck.checked || tCheck.indeterminate) {
+      const originalTab = state.tabs.find(t => t.id === tCheck.dataset.tabId);
+      if (originalTab) {
+        const newTab = { ...originalTab, scenarios: [] };
+        group.querySelectorAll('.export-scen-list input:checked').forEach(sCheck => {
+           const originalScen = originalTab.scenarios.find(s => s.id === sCheck.dataset.scenId);
+           if(originalScen) newTab.scenarios.push({...originalScen});
+        });
+        if (newTab.scenarios.length > 0 || tCheck.checked) { filteredState.tabs.push(newTab); }
+      }
+    }
+  });
+
+  if (filteredState.tabs.length === 0) { alert("Please select at least one scenario to export."); return; }
+  filteredState.activeTabId = filteredState.tabs[0].id;
+  exportBackdrop.style.display = "none";
+  exportHTML(filteredState); 
+});
 
 document.addEventListener("toggle", (e) => {
   if (e.target.matches("details.scenario")) {
@@ -640,11 +814,7 @@ document.addEventListener("toggle", (e) => {
 
 document.addEventListener("input", (e) => {
   const nameInp = e.target.closest("input[data-field='name']");
-  if (nameInp) { 
-    const sc = findScenario(nameInp.dataset.sid); 
-    if (sc) { sc.name = nameInp.value; saveState(); } // Removed renderPanelOnly so typing is smooth
-    return; 
-  }
+  if (nameInp) { const sc = findScenario(nameInp.dataset.sid); if (sc) { sc.name = nameInp.value; saveState(); } return; }
   const keyInp = e.target.closest("input[data-fkey]");
   if (keyInp) { const sc = findScenario(keyInp.dataset.sid); const field = sc.fields.find(f => f.id === keyInp.dataset.fkey); if (field) { field.key = keyInp.value; saveState(); renderPanelOnly(); } return; }
   const valInp = e.target.closest("input[data-fval]");
@@ -663,18 +833,15 @@ document.addEventListener("click", (e) => {
   const actionBtn = e.target.closest('.action-btn');
   if(actionBtn && e.target.closest('summary')) { e.preventDefault(); }
 
-  // File Creation Trigger
   const cfBtn = e.target.closest("[data-createfile]");
   if (cfBtn) { openCreateFileDialog(cfBtn.dataset.createfile); return; }
 
-  // Simplified WYSIWYG
   const cmdBtn = e.target.closest('[data-cmd]');
   if (cmdBtn) {
     e.preventDefault(); const cmd = cmdBtn.dataset.cmd; const val = cmdBtn.dataset.val || null;
-    document.execCommand(cmd, false, val);
-    updateToolbarState(); // Instantly visually confirm action
+    document.execCommand(cmd, false, val); updateToolbarState(); 
     const ev = cmdBtn.closest('.evidence-wrap').querySelector('.evidence');
-    if (ev) ev.dispatchEvent(new Event('input', {bubbles: true}));
+    if (ev) persistEvidence(ev); // BUG FIX: Forces WYSIWYG button clicks to save immediately
     return;
   }
 
@@ -683,10 +850,7 @@ document.addEventListener("click", (e) => {
   const addF = e.target.closest("[data-addfield]");
   if (addF){
     const sc = findScenario(addF.dataset.addfield);
-    if(sc) { 
-      sc.fields.push({ id: uid(), key:"", val:"" }); render(); 
-      setTimeout(() => { const inputs = document.querySelectorAll(`input[data-sid="${sc.id}"][data-fkey]`); if(inputs.length > 0) inputs[inputs.length - 1].focus(); }, 50);
-    }
+    if(sc) { sc.fields.push({ id: uid(), key:"", val:"" }); render(); setTimeout(() => { const inputs = document.querySelectorAll(`input[data-sid="${sc.id}"][data-fkey]`); if(inputs.length > 0) inputs[inputs.length - 1].focus(); }, 50); }
     return;
   }
   const delF = e.target.closest("[data-delfield]"); if (delF){ const sc = findScenario(delF.dataset.sid); if(sc) { sc.fields = sc.fields.filter(f => f.id !== delF.dataset.delfield); render(); } return; }
@@ -696,32 +860,67 @@ document.addEventListener("paste", (e) => {
   const ev = e.target.closest(".evidence[data-evidence]"); if (!ev) return;
   const dt = e.clipboardData; if (!dt) return;
   const files = [...dt.files || []]; const imgFile = files.find(f => f.type && f.type.startsWith("image/"));
-  if (imgFile){ e.preventDefault(); insertImageFileIntoEvidence(imgFile, ev); return; }
+  if (imgFile){ 
+      e.preventDefault(); 
+      const sel = window.getSelection(); if (sel.rangeCount > 0) savedRange = sel.getRangeAt(0); // Save exact range before async read
+      insertImageFileIntoEvidence(imgFile, ev); 
+      return; 
+  }
 });
 
-document.addEventListener("click", (e) => {
-  const img = e.target.closest(".evidence img"); if (!img) return;
-  let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%";
+// QUICK COPY ATTACHMENT LOGIC (Copies the entire HTML node for pasting)
+document.addEventListener("click", async (e) => {
+  const copyBtn = e.target.closest(".copy-att");
+  if (copyBtn) {
+    e.preventDefault(); e.stopPropagation();
+    const attachmentSpan = copyBtn.closest('.attachment');
+    if (!attachmentSpan) return;
+
+    try {
+      const clone = attachmentSpan.cloneNode(true);
+      const html = clone.outerHTML + "&nbsp;";
+      const plainText = clone.innerText || "Attachment";
+      
+      if (navigator.clipboard && window.ClipboardItem) {
+        const item = new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([plainText], { type: "text/plain" })
+        });
+        await navigator.clipboard.write([item]);
+      } else {
+        throw new Error("ClipboardItem not supported");
+      }
+    } catch(err) {
+      // Fallback for file:// context or older browsers
+      const temp = document.createElement("div");
+      temp.contentEditable = "true";
+      temp.innerHTML = attachmentSpan.outerHTML + "&nbsp;";
+      temp.style.position = "fixed"; temp.style.opacity = "0";
+      document.body.appendChild(temp);
+      const range = document.createRange(); range.selectNodeContents(temp);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
+
+    const oldTxt = copyBtn.textContent; copyBtn.textContent = "✅"; 
+    setTimeout(() => copyBtn.textContent = oldTxt, 1500);
+    return;
+  }
 });
 
-// The core attachment reading logic
+// The core attachment preview/download logic
 document.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-dataurl]"); if (!a) return;
-  e.preventDefault();
+  const a = e.target.closest("a[data-dataurl]"); if (!a) return; e.preventDefault();
   const dataurl = a.dataset.dataurl; if (!dataurl) return;
   const name = a.dataset.name || a.getAttribute("download") || "attachment";
   
   const parts = dataurl.split(",");
   const meta = parts[0] || ""; const b64 = parts[1] || "";
-  const m = /data:(.*?);base64/.exec(meta);
-  const mime = (m && m[1]) ? m[1] : "application/octet-stream";
+  const m = /data:(.*?);base64/.exec(meta); const mime = (m && m[1]) ? m[1] : "application/octet-stream";
   
-  const bin = atob(b64);
-  const arr = new Uint8Array(bin.length);
-  for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+  const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
   const blob = new Blob([arr], {type:mime});
-
-  // Check if file is readable text
   const isText = mime.startsWith('text/') || mime.includes('json') || mime.includes('xml') || mime.includes('sql') || mime.includes('javascript') || mime.includes('plain');
 
   if (isText) {
@@ -730,23 +929,15 @@ document.addEventListener("click", (e) => {
       document.getElementById('fpTitle').textContent = name;
       document.getElementById('fpContent').textContent = readEvent.target.result;
       document.getElementById('filePreviewBackdrop').style.display = 'flex';
-      
       document.getElementById('fpDownloadBtn').onclick = () => {
         const url = URL.createObjectURL(blob); const tmp = document.createElement("a");
         tmp.href = url; tmp.download = name; document.body.appendChild(tmp); tmp.click();
         setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
       };
-    };
-    reader.readAsText(blob);
-    return;
+    }; reader.readAsText(blob); return;
   }
-
-  // Not text, download instantly
-  const url = URL.createObjectURL(blob);
-  const tmp = document.createElement("a");
-  tmp.href = url; tmp.download = name;
-  document.body.appendChild(tmp); tmp.click();
-  setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+  const url = URL.createObjectURL(blob); const tmp = document.createElement("a"); tmp.href = url; tmp.download = name;
+  document.body.appendChild(tmp); tmp.click(); setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
 });
 
 /* ========= Global Keyboard Shortcuts ========= */
@@ -755,6 +946,8 @@ document.addEventListener("keydown", (e) => {
       document.getElementById("themeBackdrop").style.display === "flex" ||
       document.getElementById("helpBackdrop").style.display === "flex" ||
       document.getElementById("cfBackdrop").style.display === "flex" ||
+      document.getElementById("exportBackdrop").style.display === "flex" ||
+      document.getElementById("importBackdrop").style.display === "flex" ||
       document.getElementById("filePreviewBackdrop").style.display === "flex" ||
       document.getElementById("imgPreviewBackdrop").style.display === "flex") {
       
@@ -763,6 +956,8 @@ document.addEventListener("keydown", (e) => {
          document.getElementById("themeClose").click();
          document.getElementById("helpClose").click();
          document.getElementById("cfCancel").click();
+         document.getElementById("exportCancelBtn").click();
+         document.getElementById("importCancelBtn").click();
          document.getElementById("fpCloseBtn").click();
          document.getElementById("imgPreviewBackdrop").style.display = "none";
       }
@@ -801,7 +996,6 @@ function renderPanelOnly(){
     const cards = [...panel.querySelectorAll("details.scenario")];
     cards.forEach((card, idx) => {
       const sid = card.dataset.sid; const sc = findScenario(sid); if(!sc) return;
-      // Removed titleEl update here because title is now an input
       const tagsContainer = card.querySelector(".summary-tags") || card.querySelector(".summary-sub");
       const validFields = sc.fields.filter(f => f.key.trim() || f.val.trim());
       if(validFields.length > 0) {
@@ -824,9 +1018,10 @@ function openFilePicker(sid){
     if (f.type && f.type.startsWith("image/")){ insertImageFileIntoEvidence(f, ev, f.name); input.value = ""; return; }
     const r = new FileReader();
     r.onload = () => {
-      const dataUrl = r.result; const wrap = document.createElement("div"); wrap.className = "attachment"; wrap.contentEditable = "false";
-      const link = document.createElement("a"); link.textContent = "📎 " + f.name; link.download = f.name; link.dataset.name = f.name; link.dataset.dataurl = dataUrl; link.href = dataUrl;
-      wrap.appendChild(link); ev.appendChild(wrap); ev.appendChild(document.createTextNode('\u00A0')); persistEvidence(ev); input.value = ""; moveCursorToEnd(ev);
+      const dataUrl = r.result; 
+      const html = `<span class="attachment" contenteditable="false"><a href="${dataUrl}" download="${f.name}" data-name="${f.name}" data-dataurl="${dataUrl}">📎 ${f.name}</a><span class="copy-att" title="Copy file" data-copy="${dataUrl}" contenteditable="false">📋</span></span>&nbsp;`;
+      restoreSelectionAndInsert(ev, html); // Insert inline
+      input.value = ""; 
     }; r.readAsDataURL(f);
   }; input.click();
 }
@@ -834,8 +1029,8 @@ function openFilePicker(sid){
 function insertImageFileIntoEvidence(file, ev, altText){
   const r = new FileReader();
   r.onload = () => {
-    const img = document.createElement("img"); img.src = r.result; img.alt = altText || "evidence image"; img.style.width = "100%"; img.dataset.w = "100"; img.contentEditable = "false";
-    ev.appendChild(img); ev.appendChild(document.createTextNode('\u00A0')); persistEvidence(ev); moveCursorToEnd(ev);
+    const html = `<img src="${r.result}" alt="${altText || 'evidence image'}" style="width:100%;" data-w="100" contenteditable="false" />&nbsp;`;
+    restoreSelectionAndInsert(ev, html); // Insert inline
   }; r.readAsDataURL(file);
 }
 
@@ -859,10 +1054,10 @@ function closeTab(id){
   }
 }
 
-/* ========= Export HTML (Self-Extracting JSON Payload Engine) ========= */
-function exportHTML(){
+/* ========= Export HTML (Takes an exportData param instead of full state) ========= */
+function exportHTML(exportData){
   const styles = document.querySelector('style').innerHTML;
-  const payloadStr = JSON.stringify(state).replace(/</g, '\\u003c');
+  const payloadStr = JSON.stringify(exportData).replace(/</g, '\\u003c');
 
   const exportTemplate = `<!DOCTYPE html>
 <html lang="en" data-theme="${currentTheme}" data-color="${currentColor}">
@@ -921,6 +1116,94 @@ function exportHTML(){
       panelEl.innerHTML = scenariosHtml;
     }
 
+    let imgClickTimerExport = null;
+    document.addEventListener("click", (e) => {
+      const img = e.target.closest(".evidence img"); 
+      if (img){ 
+        if(e.detail > 1) return; // Ignore double click
+        clearTimeout(imgClickTimerExport);
+        imgClickTimerExport = setTimeout(() => {
+          let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%"; 
+        }, 200);
+        return; 
+      }
+      
+      const tabBtn = e.target.closest(".tab"); if(tabBtn) { activeTabId = tabBtn.dataset.tab; renderView(); return; }
+      
+      // Quick Copy logic for exported view
+      const copyBtn = e.target.closest(".copy-att");
+      if (copyBtn) {
+        e.preventDefault(); e.stopPropagation();
+        const attachmentSpan = copyBtn.closest('.attachment');
+        if (!attachmentSpan) return;
+
+        try {
+          const clone = attachmentSpan.cloneNode(true);
+          const html = clone.outerHTML + "&nbsp;";
+          const plainText = clone.innerText || "Attachment";
+          
+          if (navigator.clipboard && window.ClipboardItem) {
+            const item = new ClipboardItem({
+              "text/html": new Blob([html], { type: "text/html" }),
+              "text/plain": new Blob([plainText], { type: "text/plain" })
+            });
+            navigator.clipboard.write([item]);
+          } else { throw new Error("Fallback"); }
+        } catch(err) {
+          const temp = document.createElement("div"); temp.contentEditable = "true";
+          temp.innerHTML = attachmentSpan.outerHTML + "&nbsp;"; temp.style.position = "fixed"; temp.style.opacity = "0";
+          document.body.appendChild(temp); const range = document.createRange(); range.selectNodeContents(temp);
+          const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); document.execCommand("copy");
+          document.body.removeChild(temp);
+        }
+        const oldTxt = copyBtn.textContent; copyBtn.textContent = "✅"; setTimeout(() => copyBtn.textContent = oldTxt, 1500);
+        return;
+      }
+
+      const a = e.target.closest("a[data-dataurl]"); if (!a) return; e.preventDefault(); const dataurl = a.dataset.dataurl; if (!dataurl) return;
+      const name = a.dataset.name || a.getAttribute("download") || "attachment";
+      const parts = dataurl.split(","); const meta = parts[0] || ""; const b64 = parts[1] || ""; const m = /data:(.*?);base64/.exec(meta); const mime = (m && m[1]) ? m[1] : "application/octet-stream";
+      
+      const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+      const blob = new Blob([arr], {type:mime});
+      const isText = mime.startsWith('text/') || mime.includes('json') || mime.includes('xml') || mime.includes('sql') || mime.includes('javascript') || mime.includes('plain');
+
+      if (isText) {
+        const reader = new FileReader();
+        reader.onload = (re) => {
+           let fpBackdrop = document.getElementById("fpBackdropExport");
+           if (!fpBackdrop) {
+              fpBackdrop = document.createElement("div"); fpBackdrop.id = "fpBackdropExport";
+              fpBackdrop.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;";
+              fpBackdrop.innerHTML = '<div style="background:var(--surface);width:min(800px, 100%);max-height:90vh;display:flex;flex-direction:column;border-radius:18px;box-shadow:var(--shadow);overflow:hidden;"><div style="padding:14px 16px;border-bottom:1px solid var(--outline-2);display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:var(--text);"><span id="fpTitleExport" style="word-break:break-all;"></span><div><button id="fpCopyExport" style="margin-right:8px;padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-weight:600;">📋 Copy Text</button><button id="fpDlExport" style="margin-right:8px;padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid transparent;background:var(--primary);color:#fff;font-weight:600;">⬇ Download</button><button id="fpCloseExport" style="padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-weight:600;">Close</button></div></div><div style="flex:1;overflow:auto;background:var(--input-bg);"><pre id="fpContentExport" style="margin:0;padding:16px;font-family:monospace;font-size:13px;white-space:pre-wrap;word-wrap:break-word;color:var(--text);"></pre></div></div>';
+              document.body.appendChild(fpBackdrop);
+              document.getElementById("fpCloseExport").onclick = () => fpBackdrop.style.display = "none";
+              fpBackdrop.onclick = (ev) => { if(ev.target === fpBackdrop) fpBackdrop.style.display = "none"; };
+              
+              document.getElementById("fpCopyExport").onclick = async () => {
+                try {
+                  await navigator.clipboard.writeText(document.getElementById("fpContentExport").textContent);
+                  const btn = document.getElementById("fpCopyExport"); const orig = btn.textContent; btn.textContent = "✅ Copied!";
+                  setTimeout(() => { btn.textContent = orig; }, 1500);
+                } catch(err) { alert("Failed to copy text."); }
+              };
+           }
+           document.getElementById("fpTitleExport").textContent = name;
+           document.getElementById("fpContentExport").textContent = re.target.result;
+           document.getElementById("fpDlExport").onclick = () => {
+               const url = URL.createObjectURL(blob); const tmp = document.createElement("a");
+               tmp.href = url; tmp.download = name; document.body.appendChild(tmp); tmp.click();
+               setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+           };
+           fpBackdrop.style.display = "flex";
+        };
+        reader.readAsText(blob); return;
+      }
+      
+      const url = URL.createObjectURL(blob); const tmp = document.createElement("a"); tmp.href = url; tmp.download = name;
+      document.body.appendChild(tmp); tmp.click(); setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+    });
+
     document.addEventListener("dblclick", (e) => {
       const img = e.target.closest(".evidence img");
       if (img){
@@ -938,45 +1221,6 @@ function exportHTML(){
       }
     });
 
-    document.addEventListener("click", (e) => {
-      const tabBtn = e.target.closest(".tab"); if(tabBtn) { activeTabId = tabBtn.dataset.tab; renderView(); return; }
-      const img = e.target.closest(".evidence img"); if (img){ let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%"; return; }
-      
-      const a = e.target.closest("a[data-dataurl]"); if (!a) return; e.preventDefault(); const dataurl = a.dataset.dataurl; if (!dataurl) return;
-      const name = a.dataset.name || a.getAttribute("download") || "attachment";
-      const parts = dataurl.split(","); const meta = parts[0] || ""; const b64 = parts[1] || ""; const m = /data:(.*?);base64/.exec(meta); const mime = (m && m[1]) ? m[1] : "application/octet-stream";
-      
-      const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
-      const blob = new Blob([arr], {type:mime});
-      const isText = mime.startsWith('text/') || mime.includes('json') || mime.includes('xml') || mime.includes('sql') || mime.includes('javascript') || mime.includes('plain');
-
-      if (isText) {
-        const reader = new FileReader();
-        reader.onload = (re) => {
-           let fpBackdrop = document.getElementById("fpBackdropExport");
-           if (!fpBackdrop) {
-              fpBackdrop = document.createElement("div"); fpBackdrop.id = "fpBackdropExport";
-              fpBackdrop.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;";
-              fpBackdrop.innerHTML = '<div style="background:var(--surface);width:min(800px, 100%);max-height:90vh;display:flex;flex-direction:column;border-radius:18px;box-shadow:var(--shadow);overflow:hidden;"><div style="padding:14px 16px;border-bottom:1px solid var(--outline-2);display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:var(--text);"><span id="fpTitleExport" style="word-break:break-all;"></span><div><button id="fpDlExport" style="margin-right:8px;padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid transparent;background:var(--primary);color:#fff;font-weight:600;">Download</button><button id="fpCloseExport" style="padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-weight:600;">Close</button></div></div><div style="flex:1;overflow:auto;background:var(--input-bg);"><pre id="fpContentExport" style="margin:0;padding:16px;font-family:monospace;font-size:13px;white-space:pre-wrap;word-wrap:break-word;color:var(--text);"></pre></div></div>';
-              document.body.appendChild(fpBackdrop);
-              document.getElementById("fpCloseExport").onclick = () => fpBackdrop.style.display = "none";
-              fpBackdrop.onclick = (ev) => { if(ev.target === fpBackdrop) fpBackdrop.style.display = "none"; };
-           }
-           document.getElementById("fpTitleExport").textContent = name;
-           document.getElementById("fpContentExport").textContent = re.target.result;
-           document.getElementById("fpDlExport").onclick = () => {
-               const url = URL.createObjectURL(blob); const tmp = document.createElement("a");
-               tmp.href = url; tmp.download = name; document.body.appendChild(tmp); tmp.click();
-               setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
-           };
-           fpBackdrop.style.display = "flex";
-        };
-        reader.readAsText(blob); return;
-      }
-      
-      const url = URL.createObjectURL(blob); const tmp = document.createElement("a"); tmp.href = url; tmp.download = name;
-      document.body.appendChild(tmp); tmp.click(); setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
-    });
     renderView(); 
   <\/script>
 </body>
