@@ -801,7 +801,7 @@ function renderScenarioCard(sc, idx){
             Item ${idx+1}
           </div>
           <span style="color: var(--muted); font-weight: 400;">—</span>
-          <input class="header-name-input" data-field="name" data-sid="${sc.id}" value="${escapeAttr(sc.name||"")}" placeholder="Item Name..." onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter'){this.blur();} event.stopPropagation();" onkeyup="event.stopPropagation();" onkeypress="event.stopPropagation();" />
+          <input class="header-name-input" data-field="name" data-sid="${sc.id}" value="${escapeAttr(sc.name||"")}" placeholder="Item Name..." onclick="event.stopPropagation()" />
         </div>
         ${tagsHtml ? `<div class="summary-tags">${tagsHtml}</div>` : `<div class="summary-sub">Click to expand/collapse</div>`}
       </div>
@@ -1518,6 +1518,30 @@ document.addEventListener("click", (e) => {
 
 /* ========= Global Keyboard Shortcuts ========= */
 document.addEventListener("keydown", (e) => {
+  
+  // ---> NEW SPACEBAR FIX <---
+  // Prevents the browser from natively toggling the <details> card when space or enter is pressed inside the name input
+  if (e.target.matches("summary .header-name-input")) {
+    if (e.key === " " || e.code === "Space") {
+      e.preventDefault();
+      // Use execCommand to preserve undo stack, fallback to manual string mutation if unsupported
+      if (!document.execCommand("insertText", false, " ")) {
+          const start = e.target.selectionStart;
+          const end = e.target.selectionEnd;
+          e.target.value = e.target.value.substring(0, start) + " " + e.target.value.substring(end);
+          e.target.selectionStart = e.target.selectionEnd = start + 1;
+          e.target.dispatchEvent(new Event("input", {bubbles:true}));
+      }
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.target.blur();
+      return;
+    }
+  }
+  // ---> END SPACEBAR FIX <---
+
   if (document.getElementById("dlgBackdrop").style.display === "flex" || 
       document.getElementById("themeBackdrop").style.display === "flex" ||
       document.getElementById("helpBackdrop").style.display === "flex" ||
