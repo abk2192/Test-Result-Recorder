@@ -15,17 +15,17 @@
 
   /* Light Mode (Default) */
   :root[data-theme="light"] {
-    color-scheme: light;
+    color-scheme: light; 
     --bg: #f6f7fb; --surface: #ffffff; --surface-2: #f2f4f8;
     --text: #0f172a; --muted: #475569;
     --outline: #cbd5e1; --outline-2: #e5e7eb;
     --danger: #ef4444; --danger-hover: #fef2f2; --danger-border: #fca5a5;
     --input-bg: #ffffff; --evidence-bg: #fbfcff;
   }
-
+ 
   /* Dark Mode */
   :root[data-theme="dark"] {
-    color-scheme: dark;
+    color-scheme: dark; 
     --bg: #0f172a; --surface: #1e293b; --surface-2: #334155;
     --text: #f8fafc; --muted: #94a3b8;
     --outline: #334155; --outline-2: #475569;
@@ -33,6 +33,12 @@
     --input-bg: #0f172a; --evidence-bg: #0b1120;
     --shadow: 0 10px 25px rgba(0, 0, 0, .3); --shadow-2: 0 6px 16px rgba(0, 0, 0, .4);
   }
+  
+    /* ===== Scrollbars ===== */
+  ::-webkit-scrollbar { width: 12px; height: 12px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--outline-2); border-radius: 6px; border: 3px solid var(--bg); }
+  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
   /* Color Palettes */
   :root[data-color="blue"] { --primary: #2563eb; --primary-2: #1d4ed8; --primary-light: rgba(37,99,235,.12); --grad-1: #2563eb; --grad-2: #7c3aed; }
@@ -45,12 +51,6 @@
   :root[data-color="pink"] { --primary: #db2777; --primary-2: #be185d; --primary-light: rgba(219,39,119,.12); --grad-1: #db2777; --grad-2: #f472b6; }
   :root[data-color="cyan"] { --primary: #0891b2; --primary-2: #0e7490; --primary-light: rgba(8,145,178,.12); --grad-1: #0891b2; --grad-2: #22d3ee; }
 
-  /* ===== Scrollbars ===== */
-  ::-webkit-scrollbar { width: 12px; height: 12px; }
-  ::-webkit-scrollbar-track { background: var(--bg); }
-  ::-webkit-scrollbar-thumb { background: var(--outline-2); border-radius: 6px; border: 3px solid var(--bg); }
-  ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
-
   *{ box-sizing:border-box; }
   body{ margin:0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s ease, color 0.3s ease; }
 
@@ -62,7 +62,7 @@
   /* ===== App bar ===== */
   .appbar{ position: sticky; top:0; height: 64px; z-index: 50; background: var(--surface); opacity: 0.95; backdrop-filter: blur(10px); border-bottom: 1px solid var(--outline); transition: all 0.3s ease; }
   .appbar-inner{ display:flex; align-items:center; height: 100%; gap:12px; padding: 0 16px; max-width: 1400px; margin: 0 auto; }
-  .title{ display:flex; align-items:center; gap:10px; font-weight: 750; font-size: 16px; flex:1; min-width: 150px; }
+  .title{ display:flex; align-items:center; gap:10px; flex:1; min-width: 150px; }
   .title .badge{ width:34px; height:34px; display:grid; place-items:center; border-radius: 12px; background: linear-gradient(135deg, var(--grad-1), var(--grad-2)); color:white; box-shadow: var(--shadow-2); }
   
   .actions{ display:flex; gap:8px; flex-wrap: wrap; justify-content:flex-end; align-items: center; }
@@ -85,9 +85,21 @@
   .menu-item:hover { background: var(--surface-2); }
   .menu-item .material-symbols-outlined { font-size: 18px; color: var(--muted); }
 
+  /* Wide Screen Navbar (Desktop) */
+  @media (min-width: 1100px) {
+    .hamburger-wrap { display: flex; align-items: center; }
+    #mainMenuBtn { display: none; }
+    .menu-dropdown {
+      position: static; display: flex !important; flex-direction: row; align-items: center;
+      box-shadow: none; border: none; background: transparent; padding: 0; margin: 0;
+    }
+    .menu-item { padding: 8px 12px; border-radius: 999px; border: 1px solid transparent; margin-right: 4px; white-space: nowrap; }
+    .menu-item:hover { background: var(--surface-2); border-color: var(--outline); }
+  }
+
   /* ===== Tabs ===== */
   .tabsbar{ max-width: 1200px; margin: 0 auto; padding: 10px 16px 0; position: sticky; top: 64px; z-index: 48; background: var(--bg); }
-  .tabs{ display:flex; gap: 8px; align-items:center; overflow:auto; padding-bottom: 10px; scrollbar-width: thin; }
+  .tabs{ display:flex; gap: 8px; align-items:center; overflow:auto; padding-bottom: 6px; scrollbar-width: thin; }
   .tab{ display:flex; align-items:center; gap:8px; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--outline); background: var(--surface); color: var(--text); cursor:pointer; user-select:none; white-space:nowrap; transition: all .15s ease; font-weight: 650; font-size: 13px; }
   .tab:hover{ background: var(--surface-2); }
   .tab:active{ transform: translateY(1px); }
@@ -181,7 +193,7 @@
   input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; margin-top: 2px;}
 
   @media (max-width: 1100px){
-    .appbar { height: auto; min-height: 60px; padding: 10px 0;} 
+    .appbar { height: auto; min-height: 60px; padding: 10px 0;}
     .appbar-inner{ flex-wrap: wrap; padding: 0 12px; }
     main{ padding: 12px 12px 22px; }
     .tabsbar { top: 60px; }
@@ -271,7 +283,7 @@
             <path d="M9 15l2 2 4-4"></path>
           </svg>
         </div>
-        SnapSpace
+        <input type="text" id="workspaceTitleInput" placeholder="SnapSpace" title="Rename Workspace" style="border: none; background: transparent; font-weight: 750; font-size: 16px; color: var(--text); outline: none; width: 150px; font-family: inherit;" />
       </div>
       <div class="actions">
         <span id="saveIndicator" style="font-size: 12px; color: var(--primary); font-weight: 700; margin-right: 8px; opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 4px; pointer-events: none;"><span class="material-symbols-outlined" style="font-size: 16px;">cloud_done</span> Saved locally</span>
@@ -386,6 +398,9 @@
     <div class="dlg" style="max-width: 500px;">
       <div class="dlg-head"><span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">package</span> Export Options</span></div>
       <div class="dlg-body">
+        <div class="label" style="margin-bottom: 6px;">Export Filename</div>
+        <input class="input" id="exportFilenameInput" value="SnapSpace_Export.html" style="margin-bottom: 16px;" />
+        
         <div class="label" style="margin-bottom: 8px;">Select specific items to export:</div>
         <div id="exportChecklist" style="background: var(--surface-2); padding: 16px; border-radius: 8px; border: 1px solid var(--outline-2);"></div>
       </div>
@@ -533,7 +548,7 @@
             <p>SnapSpace is a fully self-contained, offline-first workspace designed for capturing technical evidence, rapid note-taking, and documentation without relying on external servers.</p>
             
             <h2>Keyboard Shortcuts</h2>
-            <p>Native conventions are supported to speed up data entry:</p>
+            <p>Windows 10 native conventions are supported to speed up data entry:</p>
             <ul>
               <li><code>Ctrl + V</code>: Paste images/screenshots directly into the Notes & Media area.</li>
               <li><code>Ctrl + S</code>: Trigger the Workspace Export dialog.</li>
@@ -592,13 +607,13 @@
             <ul>
               <li><b>No Build Step:</b> Direct DOM manipulation using <code>document.createElement</code> and <code>innerHTML</code>.</li>
               <li><b>Event Delegation:</b> A single global <code>click</code> listener handles interactions based on <code>data-*</code> attributes.</li>
-              <li><b>Offline First:</b> Everything operates via IndexedDB, <code>localStorage</code>, and File APIs.</li>
+              <li><b>Offline First:</b> Everything operates via <code>localStorage</code> and File APIs.</li>
             </ul>
           </section>
 
           <section id="tech-state" class="docs-section">
             <h1>State Management</h1>
-            <p>The application relies on a single source of truth stored in memory and asynchronously synced to <code>IndexedDB</code> after every mutation.</p>
+            <p>The application relies on a single source of truth stored in memory and synced to <code>localStorage</code> after every mutation.</p>
             
             <h3>State Object Structure</h3>
 <pre>
@@ -632,7 +647,7 @@ let state = {
 
             <h2>Base64 Encoding</h2>
             <p>When an image is pasted or a file is attached, the <code>FileReader</code> API converts the binary data into a Base64 Data URL string. This string is injected directly into the HTML payload.</p>
-            <p>When a user deletes a file from the WYSIWYG editor using the backspace key, the DOM node is removed. The <code>input</code> event listener catches the DOM mutation, saves the new HTML string to the asynchronous database, and the JavaScript Garbage Collector automatically clears the unreferenced memory.</p>
+            <p>When a user deletes a file from the WYSIWYG editor using the backspace key, the DOM node is removed. The <code>input</code> event listener catches the DOM mutation, saves the new HTML string to the state, and the JavaScript Garbage Collector automatically clears the unreferenced memory.</p>
           </section>
 
         </main>
@@ -680,6 +695,7 @@ const STATE_KEY = "test_recorder_tabs_v17";
 
 let dbInstance = null;
 
+// Initialize the local database
 function initDB() {
     return new Promise((resolve, reject) => {
         if (dbInstance) return resolve(dbInstance);
@@ -695,6 +711,7 @@ function initDB() {
     });
 }
 
+// Asynchronous Save
 async function saveState() {
     try {
         const db = await initDB();
@@ -702,15 +719,19 @@ async function saveState() {
         const store = tx.objectStore(STORE_NAME);
         store.put(JSON.stringify(state), STATE_KEY);
         
+        // Show auto-save indicator
         const ind = document.getElementById("saveIndicator");
         if(ind) {
             ind.style.opacity = "1";
             clearTimeout(ind.timer);
             ind.timer = setTimeout(() => ind.style.opacity = "0", 2000);
         }
-    } catch (err) { console.error("Failed to save state:", err); }
+    } catch (err) {
+        console.error("Failed to save state:", err);
+    }
 }
 
+// Asynchronous Load
 async function loadStateFromDB() {
     return new Promise(async (resolve) => {
         try {
@@ -724,7 +745,9 @@ async function loadStateFromDB() {
                 else resolve(null);
             };
             request.onerror = () => resolve(null);
-        } catch (err) { resolve(null); }
+        } catch (err) {
+            resolve(null);
+        }
     });
 }
 
@@ -733,11 +756,52 @@ let lastFocusedScenarioId = null;
 let targetScenarioForFile = null; 
 let pendingImportData = null; 
 let savedRange = null; 
-let state = null; 
+let state = null; // Will be populated asynchronously
 
 let templates = JSON.parse(localStorage.getItem('test_recorder_templates') || '[]');
 function saveTemplates(){ localStorage.setItem('test_recorder_templates', JSON.stringify(templates)); }
 function uid(){ return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+// Boot up the application
+async function bootApp() {
+    state = await loadStateFromDB();
+    
+    // Fallback migration from old localStorage if user is upgrading
+    if (!state) {
+        try { 
+            const oldLocal = localStorage.getItem(STATE_KEY);
+            if (oldLocal) state = JSON.parse(oldLocal); 
+        } catch (e) {}
+    }
+
+    // Default empty state
+    if (!state) {
+        state = {
+            activeTabId: null,
+            workspaceTitle: "SnapSpace",
+            tabs: [{ id: uid(), name: "Tab 1", scenarios: [{ id: uid(), name:"", fields: [], evidenceHtml:"", isOpen: true }] }]
+        };
+    }
+    
+    if (!state.activeTabId && state.tabs.length > 0) {
+        state.activeTabId = state.tabs[0].id;
+    }
+    
+    // Set workspace title
+    workspaceTitleInput.value = state.workspaceTitle || "SnapSpace";
+    
+    render(); // Draw the UI now that data is loaded
+}
+
+// Workspace Title Logic
+const workspaceTitleInput = document.getElementById("workspaceTitleInput");
+workspaceTitleInput.addEventListener("input", (e) => {
+    if (state) {
+        state.workspaceTitle = e.target.value;
+        saveState();
+    }
+});
+
 
 /* ========= Reset Data Button ========= */
 const resetBtn = document.getElementById("resetBtn");
@@ -745,6 +809,7 @@ resetBtn.addEventListener("click", () => {
     if(confirm("Are you sure you want to reset the board? This will delete all tabs and items.\n\nNote: Your saved Templates will NOT be deleted.")) {
         state = {
             activeTabId: null,
+            workspaceTitle: state.workspaceTitle || "SnapSpace",
             tabs: [{ id: uid(), name: "Tab 1", scenarios: [{ id: uid(), name:"", fields: [], evidenceHtml:"", isOpen: true }] }]
         };
         state.activeTabId = state.tabs[0].id;
@@ -867,8 +932,6 @@ function renderScenarioCard(sc, idx){
         <button class="btn secondary action-btn icon-only" type="button" title="Save as Template" data-template="${sc.id}"><span class="material-symbols-outlined">bookmark_add</span></button>
         <button class="btn secondary action-btn icon-only" type="button" title="Duplicate Item" data-duplicate="${sc.id}"><span class="material-symbols-outlined">content_copy</span></button>
         <button class="btn secondary action-btn icon-only" type="button" title="Move to Tab" data-move="${sc.id}"><span class="material-symbols-outlined">move_item</span></button>
-        <button class="btn secondary action-btn" type="button" data-createfile="${sc.id}" title="Create Text/XML File"><span class="material-symbols-outlined">note_add</span> New File</button>
-        <button class="btn secondary action-btn" type="button" data-attach="${sc.id}"><span class="material-symbols-outlined">attach_file</span> Attach</button>
         <button class="btn danger action-btn icon-only" type="button" title="Delete Item" data-delete="${sc.id}"><span class="material-symbols-outlined">delete</span></button>
         <div class="chev"><span class="material-symbols-outlined">expand_more</span></div>
       </div>
@@ -887,7 +950,12 @@ function renderScenarioCard(sc, idx){
            <button class="btn secondary" type="button" data-cmd="bold" title="Bold"><span class="material-symbols-outlined" style="margin:0;">format_bold</span></button>
            <button class="btn secondary" type="button" data-cmd="italic" title="Italic"><span class="material-symbols-outlined" style="margin:0;">format_italic</span></button>
            <button class="btn secondary" type="button" data-cmd="insertUnorderedList" title="Bullet List"><span class="material-symbols-outlined" style="margin:0;">format_list_bulleted</span> List</button>
-           <button class="btn secondary" type="button" data-cmd="createLink" title="Insert Link"><span class="material-symbols-outlined" style="margin:0;">link</span></button>
+			<button class="btn secondary" type="button" data-cmd="createLink" title="Insert Link"><span class="material-symbols-outlined" style="margin:0;">link</span></button>
+           
+           <div style="width: 1px; height: 20px; background: var(--outline-2); margin: 0 4px;"></div>
+           
+           <button class="btn secondary action-btn" type="button" data-createfile="${sc.id}" title="Create Text/XML File"><span class="material-symbols-outlined" style="font-size: 16px;">note_add</span> New File</button>
+           <button class="btn secondary action-btn" type="button" data-attach="${sc.id}"><span class="material-symbols-outlined" style="font-size: 16px;">attach_file</span> Attach</button>
         </div>
         <div class="evidence" contenteditable="true" data-evidence="${sc.id}" spellcheck="false"></div>
         <div class="hint"><span class="material-symbols-outlined" style="font-size: 14px;">info</span> Paste screenshots (Ctrl+V) or use the toolbar to format. Double-click images to view full size.</div>
@@ -1006,6 +1074,7 @@ fpCopyBtn.addEventListener("click", async () => {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(textToCopy);
     } else {
+      // Robust Fallback for Android WebViews & local file://
       const textArea = document.createElement("textarea");
       textArea.value = textToCopy;
       textArea.style.position = "fixed";
@@ -1102,27 +1171,11 @@ tplListEl.addEventListener("click", (e) => {
     }
 });
 
-tplExportTrigger.addEventListener("click", async () => {
+tplExportTrigger.addEventListener("click", () => {
     const blob = new Blob([JSON.stringify(templates)], {type:"application/json"});
-    const defaultName = "item_templates.json";
-
-    if (window.showSaveFilePicker) {
-        try {
-            const handle = await window.showSaveFilePicker({
-                suggestedName: defaultName,
-                types: [{ description: 'JSON File', accept: {'application/json': ['.json']} }]
-            });
-            const writable = await handle.createWritable();
-            await writable.write(blob);
-            await writable.close();
-        } catch (err) { 
-            if (err.name !== 'AbortError') console.error("Template save failed:", err); 
-        }
-    } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement("a"); a.href = url; a.download = defaultName;
-        document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-    }
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "item_templates.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
 });
 
 tplImportTrigger.addEventListener("click", () => tplImportFile.click());
@@ -1133,6 +1186,7 @@ tplImportFile.addEventListener("change", (e) => {
         try {
             const loaded = JSON.parse(event.target.result);
             if(Array.isArray(loaded)) {
+                // simple merge
                 loaded.forEach(l => { l.id = uid(); templates.push(l); });
                 saveTemplates(); renderTemplates(); alert("Templates imported successfully!");
             }
@@ -1368,6 +1422,9 @@ const exportCancelBtn = document.getElementById("exportCancelBtn");
 const exportConfirmBtn = document.getElementById("exportConfirmBtn");
 
 exportHtmlBtn.addEventListener("click", () => {
+  const now = new Date(); 
+  document.getElementById("exportFilenameInput").value = `SnapSpace_Export_${now.toISOString().slice(0,10)}.html`;
+    
   const list = document.getElementById("exportChecklist"); list.innerHTML = "";
   state.tabs.forEach((tab, tIdx) => {
     const group = document.createElement("div"); group.className = "export-tab-group";
@@ -1419,7 +1476,11 @@ exportConfirmBtn.addEventListener("click", () => {
   if (filteredState.tabs.length === 0) { alert("Please select at least one item to export."); return; }
   filteredState.activeTabId = filteredState.tabs[0].id;
   exportBackdrop.style.display = "none";
-  exportHTML(filteredState); 
+  
+  let customFilename = document.getElementById("exportFilenameInput").value.trim() || "SnapSpace_Export.html";
+  if (!customFilename.endsWith(".html")) customFilename += ".html";
+  
+  exportHTML(filteredState, customFilename); 
 });
 
 document.addEventListener("toggle", (e) => {
@@ -1490,17 +1551,25 @@ document.addEventListener("click", (e) => {
   if (cmdBtn) {
     e.preventDefault(); const cmd = cmdBtn.dataset.cmd; let val = cmdBtn.dataset.val || null;
     
-    // Ask for URL if they click the link button
+    // NEW: Ask for URL if they click the link button
     if (cmd === 'createLink') {
        val = prompt("Enter the URL:");
        if (!val) return;
-       if (!/^https?:\/\//i.test(val)) val = 'https://' + val; 
+       if (!/^https?:\/\//i.test(val)) val = 'https://' + val; // Auto-add https://
     }
     
-    document.execCommand(cmd, false, val); updateToolbarState(); 
+    document.execCommand(cmd, false, val); updateToolbarState();
     const ev = cmdBtn.closest('.evidence-wrap').querySelector('.evidence');
     if (ev) persistEvidence(ev);
     return;
+  }
+  
+    // NEW: Open standard links in a new tab when clicked inside Notes
+  const evidenceLink = e.target.closest(".evidence a");
+  if (evidenceLink && !evidenceLink.closest(".attachment") && !evidenceLink.hasAttribute("data-dataurl")) {
+      e.preventDefault();
+      window.open(evidenceLink.href, '_blank');
+      return;
   }
 
   const del = e.target.closest("[data-delete]"); if (del){ deleteScenario(del.dataset.delete); return; }
@@ -1512,14 +1581,6 @@ document.addEventListener("click", (e) => {
     return;
   }
   const delF = e.target.closest("[data-delfield]"); if (delF){ const sc = findScenario(delF.dataset.sid); if(sc) { sc.fields = sc.fields.filter(f => f.id !== delF.dataset.delfield); render(); } return; }
-
-  // Open standard links in a new tab when clicked inside Notes
-  const evidenceLink = e.target.closest(".evidence a");
-  if (evidenceLink && !evidenceLink.closest(".attachment") && !evidenceLink.hasAttribute("data-dataurl")) {
-      e.preventDefault();
-      window.open(evidenceLink.href, '_blank');
-      return;
-  }
 });
 
 document.addEventListener("paste", (e) => {
@@ -1528,14 +1589,14 @@ document.addEventListener("paste", (e) => {
   
   // 1. Handle Images
   const files = [...dt.files || []]; const imgFile = files.find(f => f.type && f.type.startsWith("image/"));
-  if (imgFile){ 
-      e.preventDefault(); 
-      const sel = window.getSelection(); if (sel.rangeCount > 0) savedRange = sel.getRangeAt(0); 
-      insertImageFileIntoEvidence(imgFile, ev); 
-      return; 
+  if (imgFile){
+      e.preventDefault();
+      const sel = window.getSelection(); if (sel.rangeCount > 0) savedRange = sel.getRangeAt(0);
+      insertImageFileIntoEvidence(imgFile, ev);
+      return;
   }
-
-  // 2. Auto-detect pure URL text strings and convert them to links
+ 
+  // 2. NEW: Auto-detect pure URL text strings and convert them to links
   const text = dt.getData("text/plain");
   const urlRegex = /^(https?:\/\/[^\s]+)$/i;
   if (text && urlRegex.test(text.trim())) {
@@ -1622,10 +1683,12 @@ document.addEventListener("click", (e) => {
 /* ========= Global Keyboard Shortcuts ========= */
 document.addEventListener("keydown", (e) => {
   
+  // ---> NEW SPACEBAR FIX <---
   // Prevents the browser from natively toggling the <details> card when space or enter is pressed inside the name input
   if (e.target.matches("summary .header-name-input")) {
     if (e.key === " " || e.code === "Space") {
       e.preventDefault();
+      // Use execCommand to preserve undo stack, fallback to manual string mutation if unsupported
       if (!document.execCommand("insertText", false, " ")) {
           const start = e.target.selectionStart;
           const end = e.target.selectionEnd;
@@ -1641,6 +1704,7 @@ document.addEventListener("keydown", (e) => {
       return;
     }
   }
+  // ---> END SPACEBAR FIX <---
 
   if (document.getElementById("dlgBackdrop").style.display === "flex" || 
       document.getElementById("themeBackdrop").style.display === "flex" ||
@@ -1762,7 +1826,7 @@ function closeTab(id){
 }
 
 /* ========= Export HTML (Takes an exportData param instead of full state) ========= */
-async function exportHTML(exportData){
+function exportHTML(exportData, filename){
   const styles = document.querySelector('style').innerHTML;
   const payloadStr = JSON.stringify(exportData).replace(/</g, '\\u003c');
 
@@ -1960,29 +2024,14 @@ async function exportHTML(exportData){
 </html>`;
 
   const blob = new Blob([exportTemplate], {type:"text/html"});
-  const now = new Date(); const dateStr = now.toISOString().slice(0,10);
-  const defaultName = `Workspace_Export_${dateStr}.html`;
-
-  if (window.showSaveFilePicker) {
-      try {
-          const handle = await window.showSaveFilePicker({
-              suggestedName: defaultName,
-              types: [{ description: 'HTML Document', accept: {'text/html': ['.html']} }]
-          });
-          const writable = await handle.createWritable();
-          await writable.write(blob);
-          await writable.close();
-      } catch (err) {
-          if (err.name !== 'AbortError') console.error("Save failed:", err);
-      }
-  } else {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = defaultName;
-      document.body.appendChild(a); a.click();
-      setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
-  }
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  
+  a.download = filename; 
+  
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
 }
 
 /* ========= Dialog utility ========= */
@@ -2008,8 +2057,9 @@ dlgBackdrop.addEventListener("click", (e) => { if (e.target === dlgBackdrop) dlg
 function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({"&":"&","<":"<",">":">",'"':"&quot;","'":"&#39;"}[s])); }
 function escapeAttr(str){ return escapeHtml(str).replace(/"/g, "&quot;"); }
 
-/* Initial boot */
+/* Initial render */
 bootApp();
+
 </script>
 </body>
 </html>
