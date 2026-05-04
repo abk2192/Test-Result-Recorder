@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-color="blue">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SnapSpace</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+<style>
+  /* ===== Theme Engine (CSS Variables) ===== */
+  :root {
+    --r12: 16px; --r10: 12px; --r8: 10px;
+    --shadow: 0 10px 25px rgba(0, 0, 0, .05);
+    --shadow-2: 0 6px 16px rgba(0, 0, 0, .08);
+  }
+
+  /* Light Mode (Default) */
+  :root[data-theme="light"] {
+    --bg: #f6f7fb; --surface: #ffffff; --surface-2: #f2f4f8;
+    --text: #0f172a; --muted: #475569;
+    --outline: #cbd5e1; --outline-2: #e5e7eb;
+    --danger: #ef4444; --danger-hover: #fef2f2; --danger-border: #fca5a5;
+    --input-bg: #ffffff; --evidence-bg: #fbfcff;
+  }
+
+  /* Dark Mode */
+  :root[data-theme="dark"] {
+    --bg: #0f172a; --surface: #1e293b; --surface-2: #334155;
+    --text: #f8fafc; --muted: #94a3b8;
+    --outline: #334155; --outline-2: #475569;
+    --danger: #f87171; --danger-hover: #451a1a; --danger-border: #7f1d1d;
+    --input-bg: #0f172a; --evidence-bg: #0b1120;
+    --shadow: 0 10px 25px rgba(0, 0, 0, .3); --shadow-2: 0 6px 16px rgba(0, 0, 0, .4);
+  }
+
+  /* Color Palettes */
+  :root[data-color="blue"] { --primary: #2563eb; --primary-2: #1d4ed8; --primary-light: rgba(37,99,235,.12); --grad-1: #2563eb; --grad-2: #7c3aed; }
+  :root[data-color="green"] { --primary: #16a34a; --primary-2: #15803d; --primary-light: rgba(22,163,74,.12); --grad-1: #16a34a; --grad-2: #059669; }
+  :root[data-color="purple"] { --primary: #9333ea; --primary-2: #7e22ce; --primary-light: rgba(147,51,234,.12); --grad-1: #9333ea; --grad-2: #c026d3; }
+  :root[data-color="rose"] { --primary: #e11d48; --primary-2: #be123c; --primary-light: rgba(225,29,72,.12); --grad-1: #e11d48; --grad-2: #f43f5e; }
+  :root[data-color="orange"] { --primary: #ea580c; --primary-2: #c2410c; --primary-light: rgba(234,88,12,.12); --grad-1: #ea580c; --grad-2: #f59e0b; }
+  :root[data-color="teal"] { --primary: #0d9488; --primary-2: #0f766e; --primary-light: rgba(13,148,136,.12); --grad-1: #0d9488; --grad-2: #14b8a6; }
+  :root[data-color="indigo"] { --primary: #4f46e5; --primary-2: #4338ca; --primary-light: rgba(79,70,229,.12); --grad-1: #4f46e5; --grad-2: #818cf8; }
+  :root[data-color="pink"] { --primary: #db2777; --primary-2: #be185d; --primary-light: rgba(219,39,119,.12); --grad-1: #db2777; --grad-2: #f472b6; }
+  :root[data-color="cyan"] { --primary: #0891b2; --primary-2: #0e7490; --primary-light: rgba(8,145,178,.12); --grad-1: #0891b2; --grad-2: #22d3ee; }
+
+  *{ box-sizing:border-box; }
+  body{ margin:0; font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); transition: background 0.3s ease, color 0.3s ease; }
+
+  /* Icons */
+  .material-symbols-outlined { font-size: 18px; vertical-align: middle; line-height: 1; user-select: none; }
+  .btn .material-symbols-outlined { font-size: 16px; margin-right: 4px; }
+  .action-btn .material-symbols-outlined { margin-right: 0; }
+
+  /* ===== App bar ===== */
+  .appbar{ position: sticky; top:0; height: 64px; z-index: 50; background: var(--surface); opacity: 0.95; backdrop-filter: blur(10px); border-bottom: 1px solid var(--outline); transition: all 0.3s ease; }
+  .appbar-inner{ display:flex; align-items:center; height: 100%; gap:12px; padding: 0 16px; max-width: 1400px; margin: 0 auto; }
+  .title{ display:flex; align-items:center; gap:10px; font-weight: 750; font-size: 16px; flex:1; min-width: 150px; }
+  .title .badge{ width:34px; height:34px; display:grid; place-items:center; border-radius: 12px; background: linear-gradient(135deg, var(--grad-1), var(--grad-2)); color:white; box-shadow: var(--shadow-2); }
+  
+  .actions{ display:flex; gap:8px; flex-wrap: wrap; justify-content:flex-end; align-items: center; }
+  
+  .btn{ display: inline-flex; align-items: center; justify-content: center; appearance:none; border: 1px solid transparent; background: var(--primary); color:#fff; padding: 9px 12px; border-radius: 999px; cursor:pointer; font-weight: 650; font-size: 13px; box-shadow: 0 4px 10px var(--primary-light); transition: all .15s ease; user-select:none; white-space:nowrap; }
+  .btn:hover{ background: var(--primary-2); }
+  .btn:active{ transform: translateY(1px); box-shadow: none; }
+  .btn.secondary{ background: var(--surface); color: var(--text); border-color: var(--outline); box-shadow:none; }
+  .btn.secondary:hover{ background: var(--surface-2); }
+  .btn.danger{ background: var(--surface); color: var(--danger); border-color: var(--outline); box-shadow:none; }
+  .btn.danger:hover { background: var(--danger-hover); border-color: var(--danger-border); }
+  .btn.icon-only { padding: 8px; border-radius: 8px; }
+  .btn.icon-only .material-symbols-outlined { margin-right: 0; font-size: 20px; }
+
+  /* Hamburger Menu */
+  .hamburger-wrap { position: relative; display: inline-block; }
+  .menu-dropdown { position: absolute; top: 100%; left: 0; margin-top: 8px; background: var(--surface); border: 1px solid var(--outline-2); border-radius: 12px; box-shadow: var(--shadow); display: none; flex-direction: column; min-width: 180px; overflow: hidden; z-index: 100;}
+  .menu-dropdown.show { display: flex; }
+  .menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: transparent; border: none; color: var(--text); cursor: pointer; font-size: 13px; font-weight: 600; text-align: left; transition: background 0.2s ease; font-family: inherit;}
+  .menu-item:hover { background: var(--surface-2); }
+  .menu-item .material-symbols-outlined { font-size: 18px; color: var(--muted); }
+
+  /* ===== Tabs ===== */
+  .tabsbar{ max-width: 1200px; margin: 0 auto; padding: 10px 16px 0; position: sticky; top: 64px; z-index: 48; background: var(--bg); }
+  .tabs{ display:flex; gap: 8px; align-items:center; overflow:auto; padding-bottom: 6px; scrollbar-width: thin; }
+  .tab{ display:flex; align-items:center; gap:8px; padding: 10px 12px; border-radius: 999px; border: 1px solid var(--outline); background: var(--surface); color: var(--text); cursor:pointer; user-select:none; white-space:nowrap; transition: all .15s ease; font-weight: 650; font-size: 13px; }
+  .tab:hover{ background: var(--surface-2); }
+  .tab:active{ transform: translateY(1px); }
+  .tab.active{ border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+  .tab .x{ width: 20px; height:20px; display:grid; place-items:center; border-radius: 999px; border: 1px solid transparent; color: var(--muted); font-weight: 900; font-size: 14px; }
+  .tab .x:hover{ background: var(--danger-hover); color: var(--danger); }
+  .tab.plus{ border-style:dashed; color: var(--muted); background: transparent; }
+
+  /* ===== Drag & Drop Feedback ===== */
+  .dragging { opacity: 0.4; }
+  .drag-over { background: var(--surface-2); border-left: 4px solid var(--primary); }
+  .drag-over-scenario { border-top: 4px solid var(--primary) !important; border-top-left-radius: 0; border-top-right-radius: 0; }
+
+  /* ===== Main layout ===== */
+  main{ max-width: 1200px; margin: 0 auto; padding: 14px 16px 28px; }
+  .panel-head{ display:flex; align-items:flex-start; justify-content: space-between; gap: 12px; margin: 12px 0 10px; }
+  .panel-meta{ color: var(--muted); font-size: 13px; line-height: 1.35; display: flex; align-items: center; gap: 4px;}
+  .tab-panel { display: none; }
+
+  /* ===== Cards / scenarios ===== */
+  details.scenario{ background: var(--surface); border: 1px solid var(--outline-2); border-radius: var(--r12); box-shadow: var(--shadow); margin: 12px 0; transition: all 0.2s ease; position: relative; }
+  
+  /* STICKY SUMMARY */
+  summary{ list-style:none; cursor:pointer; padding: 12px 16px; display:flex; align-items:flex-start; justify-content: space-between; gap: 12px; user-select:none; position: sticky; top: 110px; z-index: 46; background: var(--surface); border-radius: var(--r12) var(--r12) 0 0; transition: background 0.3s ease; }
+  details[open] > summary { border-bottom: 1px solid var(--outline-2); }
+  summary::-webkit-details-marker{ display:none; }
+  
+  .summary-content { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .summary-sub{ font-size: 12px; color: var(--muted); }
+  
+  /* INLINE HEADER INPUT */
+  .header-name-input { flex: 1; background: transparent; border: 1px solid transparent; border-radius: 6px; padding: 4px 8px; font-family: inherit; font-size: 14px; font-weight: 750; color: var(--text); transition: all 0.2s ease; min-width: 150px; outline: none; }
+  .header-name-input:hover { background: var(--surface-2); border-color: var(--outline); }
+  .header-name-input:focus { background: var(--input-bg); border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+  .header-name-input::placeholder { color: var(--muted); opacity: 0.6; font-weight: 500; }
+
+  .summary-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+  .summary-actions .btn { padding: 6px 10px; font-size: 12px; }
+  
+  .summary-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+  .tag { font-size: 11px; background: var(--surface-2); border: 1px solid var(--outline-2); padding: 3px 8px; border-radius: 6px; color: var(--muted); white-space: nowrap; user-select: text; }
+  .tag b { color: var(--text); font-weight: 700; margin-right: 4px; }
+
+  .chev{ width: 30px; height:30px; display:grid; place-items:center; border-radius: 10px; border: 1px solid var(--outline-2); background: var(--surface); color: var(--muted); flex: none; }
+  .chev span.material-symbols-outlined { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  details[open] summary .chev span.material-symbols-outlined { transform: rotate(180deg); }
+
+  .card-body{ padding: 14px 16px 16px; }
+
+  /* Dynamic Fields */
+  .field-list { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+  .field-row { display: flex; gap: 8px; align-items: center; }
+  .field-row .input { flex: 1; }
+  .field-row .btn.del { padding: 0; width: 38px; height: 38px; font-size: 18px; display: grid; place-items: center; color: var(--danger); }
+
+  .label{ font-size: 12px; font-weight: 700; color: var(--muted); margin-bottom: 4px; display: flex; align-items: center; gap: 4px; }
+  
+  .input{ width: 100%; padding: 11px 12px; border-radius: 12px; border: 1px solid var(--outline); background: var(--input-bg); color: var(--text); outline: none; transition: all .15s ease; font-size: 13px; font-family: inherit;}
+  .input:focus{ border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
+
+  /* WYSIWYG */
+  .wysiwyg-toolbar { display: flex; gap: 4px; margin-bottom: 6px; align-items: center; flex-wrap: wrap; }
+  .wysiwyg-toolbar .btn { padding: 4px 8px; font-size: 12px; font-weight: 700; border-radius: 6px; transition: all 0.2s ease; }
+  .wysiwyg-toolbar .btn.active-format { background: var(--primary-light) !important; color: var(--primary) !important; border-color: var(--primary) !important; }
+
+  .evidence-wrap{ margin-top: 16px; }
+  .evidence{ border: 1px dashed var(--outline-2); background: var(--evidence-bg); color: var(--text); border-radius: var(--r12); padding: 12px; min-height: 130px; outline:none; line-height: 1.5; transition: all 0.3s ease; }
+  .evidence:focus{ border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); background: var(--input-bg); }
+  .evidence p { margin: 0 0 8px 0; }
+  .evidence ul { margin: 0 0 8px 0; padding-left: 24px; list-style-type: disc; }
+  .evidence ol { margin: 0 0 8px 0; padding-left: 24px; list-style-type: decimal; }
+  .evidence li { margin-bottom: 4px; }
+  
+  .hint{ font-size: 12px; color: var(--muted); margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+
+  /* Attachments & Quick Copy */
+  .attachment{ margin-top: 8px; display:inline-flex; align-items:center; gap: 8px; padding: 8px 12px; border-radius: 12px; border: 1px solid var(--outline-2); background: var(--surface-2); margin-right: 8px; vertical-align: middle; }
+  .attachment a{ color: var(--primary); text-decoration:none; font-weight: 650; font-size: 13px; word-break: break-all; cursor: pointer; display: flex; align-items: center; gap: 4px;}
+  .attachment a:hover{ text-decoration: underline; }
+  .copy-att { cursor: pointer; opacity: 0.5; transition: opacity 0.2s; font-size: 16px; user-select: none; padding: 2px; margin-left: 4px; border-left: 1px solid var(--outline); padding-left: 8px; display: flex; align-items: center;}
+  .copy-att:hover { opacity: 1; }
+
+  .evidence img{ max-width: 100%; height: auto; cursor: nwse-resize; border-radius: 12px; margin-top: 8px; box-shadow: var(--shadow-2); transition: width .15s ease; vertical-align: middle; }
+
+  /* Import / Export Specifics */
+  .export-tab-group { margin-bottom: 12px; border-bottom: 1px solid var(--outline-2); padding-bottom: 12px;}
+  .export-tab-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0;}
+  .export-tab-label { font-weight: 700; display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; color: var(--text); cursor: pointer; }
+  .export-scen-list { padding-left: 26px; display: flex; flex-direction: column; gap: 8px; }
+  .export-scen-label { font-size: 13px; display: flex; align-items: flex-start; gap: 10px; color: var(--muted); cursor: pointer;}
+  input[type="checkbox"], input[type="radio"] { accent-color: var(--primary); width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; margin-top: 2px;}
+
+  @media (max-width: 1100px){
+    .appbar { height: auto; min-height: 60px; padding: 10px 0;}
+    .appbar-inner{ flex-wrap: wrap; padding: 0 12px; }
+    main{ padding: 12px 12px 22px; }
+    .tabsbar { top: 60px; }
+    summary { top: 106px; flex-direction: column; }
+    .summary-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap;}
+  }
+
+  /* Dialogs */
+  .dlg-backdrop{ position: fixed; inset:0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 100; }
+  .dlg{ width: min(520px, 100%); background: var(--surface); border-radius: 18px; border: 1px solid var(--outline-2); box-shadow: var(--shadow); overflow:hidden; display: flex; flex-direction: column; max-height: 90vh; }
+  .dlg-head{ padding: 14px 16px; border-bottom: 1px solid var(--outline-2); font-weight: 800; font-size: 16px; color: var(--text); flex-shrink: 0; display: flex; align-items: center; justify-content: space-between;}
+  .dlg-body{ padding: 14px 16px; color: var(--text); overflow-y: auto; }
+  .dlg-actions{ padding: 12px 16px; border-top: 1px solid var(--outline-2); display:flex; justify-content:flex-end; gap: 8px; flex-shrink: 0;}
+
+  /* Templates List */
+  .tpl-item { display: flex; justify-content: space-between; align-items: center; padding: 10px; border: 1px solid var(--outline-2); border-radius: 8px; margin-bottom: 8px; background: var(--surface); transition: background 0.2s ease;}
+  .tpl-item:hover { background: var(--surface-2); }
+  .tpl-name { font-weight: 600; font-size: 14px; }
+  .tpl-meta { font-size: 11px; color: var(--muted); margin-top: 2px;}
+
+  /* Theme Chooser */
+  .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;}
+  .theme-card { display:flex; align-items:center; justify-content:center; gap: 6px; border: 2px solid var(--outline-2); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; color: var(--text); transition: all 0.2s ease; }
+  .theme-card:hover { border-color: var(--muted); }
+  .theme-card.active { border-color: var(--primary); background: var(--primary-light); }
+  .color-grid { display: flex; gap: 12px; justify-content: center; }
+  .color-swatch { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; border: 3px solid transparent; transition: transform 0.2s ease; }
+  .color-swatch:hover { transform: scale(1.1); }
+  .color-swatch.active { border-color: var(--text); }
+
+  /* Embedded Documentation Styles */
+  .docs-section { display: none; max-width: 800px; line-height: 1.6; padding-bottom: 40px; }
+  .docs-section.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+  .docs-nav-item { padding: 10px 20px; cursor: pointer; font-size: 13px; font-weight: 600; color: var(--text); border-left: 3px solid transparent; display:flex; align-items:center; gap:8px; transition: background 0.2s; }
+  .docs-nav-item:hover { background: var(--surface); }
+  .docs-nav-item.active { background: var(--primary-light); color: var(--primary); border-left-color: var(--primary); }
+  .docs-section h1 { font-size: 28px; margin-top: 0; margin-bottom: 8px; line-height: 1.2; }
+  .docs-section h2 { font-size: 20px; margin-top: 24px; padding-bottom: 8px; border-bottom: 1px solid var(--outline-2); }
+  .docs-section h3 { font-size: 16px; margin-top: 20px; color: var(--primary); }
+  .docs-section p { color: var(--muted); margin-bottom: 16px; }
+  .docs-section ul { color: var(--muted); padding-left: 20px; margin-bottom: 16px; }
+  .docs-section li { margin-bottom: 6px; }
+  .docs-section code { background: var(--surface-2); padding: 2px 6px; border-radius: 4px; font-family: monospace; font-size: 12px; color: var(--danger); word-break: break-word; border: 1px solid var(--outline-2); }
+  .docs-section pre { background: var(--input-bg); color: var(--text); border: 1px solid var(--outline-2); padding: 16px; border-radius: 8px; overflow-x: auto; font-family: monospace; font-size: 13px; line-height: 1.5; margin-bottom: 16px; }
+  .docs-section details { background: var(--surface); border: 1px solid var(--outline-2); border-radius: 8px; margin-bottom: 12px; overflow: hidden; }
+  .docs-section summary { padding: 14px 16px; font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; margin: 0 !important; top: 0; border-radius: 0; background: var(--surface); }
+  .docs-section summary::-webkit-details-marker { display: none; }
+  .docs-section summary::after { content: 'expand_more'; font-family: 'Material Symbols Outlined'; color: var(--muted); transition: transform 0.2s; }
+  .docs-section details[open] summary { border-bottom: 1px solid var(--outline-2); }
+  .docs-section details[open] summary::after { transform: rotate(180deg); }
+  .docs-badge { display: inline-block; padding: 2px 8px; background: var(--surface-2); border: 1px solid var(--outline-2); border-radius: 99px; font-size: 11px; font-weight: 600; margin-left: 8px; vertical-align: middle; color: var(--text); }
+  
+  @media (max-width: 768px) {
+    #docsSidebar { position: absolute; left: 0; top: 0; bottom: 0; transform: translateX(-100%); transition: transform 0.3s ease; z-index: 10; box-shadow: var(--shadow); }
+    #docsSidebar.open { transform: translateX(0); }
+    #docsMenuToggle { display: flex !important; }
+    #docsMain { padding-top: 50px !important; } 
+  }
+
+  /* Export-only Readonly Styles */
+  .readonly summary{ cursor: pointer !important; }
+  .readonly [contenteditable]{ outline:none !important; }
+  .readonly .header-name-input { pointer-events: auto; user-select: text; border: none; background: transparent; padding: 0; box-shadow: none; }
+  .readonly .tag { user-select: text; }
+</style>
+</head>
+
+<body>
+  <header class="appbar">
+    <div class="appbar-inner">
+      <div class="hamburger-wrap">
+        <button class="btn secondary icon-only" id="mainMenuBtn" title="Menu"><span class="material-symbols-outlined">menu</span></button>
+        <div class="menu-dropdown" id="mainMenuDropdown">
+          <button class="menu-item" id="compareBtn"><span class="material-symbols-outlined">compare_arrows</span> Compare Mode</button>
+          <button class="menu-item" id="tplOpenBtn"><span class="material-symbols-outlined">bookmarks</span> Templates</button>
+          <button class="menu-item" id="themeBtn"><span class="material-symbols-outlined">palette</span> Theme Settings</button>
+          <button class="menu-item" id="helpBtn"><span class="material-symbols-outlined">help</span> Documentation</button> 
+        </div>
+      </div>
+      
+      <div class="title" style="margin-left: 4px;">
+        <div class="badge">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <path d="M14 2v6h6"></path>
+            <path d="M9 15l2 2 4-4"></path>
+          </svg>
+        </div>
+        SnapSpace
+      </div>
+      <div class="actions">
+        <span id="saveIndicator" style="font-size: 12px; color: var(--primary); font-weight: 700; margin-right: 8px; opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 4px; pointer-events: none;"><span class="material-symbols-outlined" style="font-size: 16px;">cloud_done</span> Saved locally</span>
+        <button class="btn secondary" id="renameTabBtn"><span class="material-symbols-outlined">edit</span> Rename Tab</button>
+        <button class="btn secondary" id="importBtn"><span class="material-symbols-outlined">upload</span> Import</button>
+        <input type="file" id="importInput" accept=".html" hidden />
+        <button class="btn danger" id="resetBtn" title="Clear all tabs and items"><span class="material-symbols-outlined">delete_sweep</span> Reset</button>
+        <button class="btn" id="addScenarioBtn"><span class="material-symbols-outlined">add</span> Add Item</button>
+        <button class="btn" id="exportHtmlBtn"><span class="material-symbols-outlined">download</span> Export Workspace</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="tabsbar">
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <main>
+    <div class="panel-head">
+      <div>
+        <div class="panel-meta" id="panelMeta"><span class="material-symbols-outlined" style="font-size: 16px;">lightbulb</span> Tip: Paste screenshots directly into Notes (Ctrl+V). Click images to resize. Drag tabs and items to reorder.</div>
+      </div>
+    </div>
+    <div id="panel"></div>
+  </main>
+
+  <div class="dlg-backdrop" id="dlgBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg">
+      <div class="dlg-head" id="dlgTitle">Dialog</div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom:6px;">Name</div>
+        <input class="input" id="dlgInput" placeholder="Enter name..." />
+        <div class="hint" id="dlgHint" style="margin-top:8px;"></div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="dlgCancel">Cancel</button>
+        <button class="btn" id="dlgOk">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="tplBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 650px;">
+      <div class="dlg-head">
+        <span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">bookmarks</span> Item Templates</span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn secondary" id="tplImportTrigger" style="padding: 6px 10px; font-size:12px;"><span class="material-symbols-outlined">upload</span> Import JSON</button>
+          <input type="file" id="tplImportFile" accept=".json" hidden />
+          <button class="btn secondary" id="tplExportTrigger" style="padding: 6px 10px; font-size:12px;"><span class="material-symbols-outlined">download</span> Export JSON</button>
+        </div>
+      </div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom: 12px;">Saved Templates</div>
+        <div id="tplList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn" id="tplCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="moveBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 400px;">
+      <div class="dlg-head">
+        <span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">move_item</span> Move Item</span>
+      </div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom:6px;">Destination Tab</div>
+        <select class="input" id="moveSelect"></select>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="moveCancelBtn">Cancel</button>
+        <button class="btn" id="moveConfirmBtn">Move Item</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="compareBackdrop" role="dialog" style="z-index: 90;">
+    <div class="dlg" style="width: 95vw; max-width: 1600px; height: 95vh; display: flex; flex-direction: column;">
+      <div class="dlg-head" style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">compare_arrows</span> Compare Items</span>
+        <div style="display:flex; align-items:center; gap: 16px;">
+          <label style="font-size: 13px; font-weight: 600; cursor: pointer; display:flex; align-items:center; gap:6px; color: var(--text);">
+            <input type="checkbox" id="compSync" checked> Sync Scroll
+          </label>
+          <button class="btn secondary" id="compCloseBtn" style="padding: 6px 12px;">Close</button>
+        </div>
+      </div>
+      <div class="dlg-body" style="flex:1; padding: 12px; background: var(--surface-2); display: grid; grid-template-columns: 1fr 1fr; gap: 12px; overflow: hidden;">
+        
+        <div style="display:flex; flex-direction:column; background: var(--surface); border: 1px solid var(--outline); border-radius: 8px; min-height: 0;">
+          <div style="padding: 8px; border-bottom: 1px solid var(--outline); display:flex; gap:8px;">
+            <select class="input" id="compLeftTab" style="padding:6px; height:auto; flex: 1; min-width: 0;"></select>
+            <select class="input" id="compLeftScen" style="padding:6px; height:auto; flex: 2; min-width: 0;"></select>
+          </div>
+          <div class="evidence readonly" id="compLeftEv" style="flex:1; overflow-y:auto; overflow-x:hidden; padding:16px; border:none; margin:0; border-radius:0;"></div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; background: var(--surface); border: 1px solid var(--outline); border-radius: 8px; min-height: 0;">
+          <div style="padding: 8px; border-bottom: 1px solid var(--outline); display:flex; gap:8px;">
+            <select class="input" id="compRightTab" style="padding:6px; height:auto; flex: 1; min-width: 0;"></select>
+            <select class="input" id="compRightScen" style="padding:6px; height:auto; flex: 2; min-width: 0;"></select>
+          </div>
+          <div class="evidence readonly" id="compRightEv" style="flex:1; overflow-y:auto; overflow-x:hidden; padding:16px; border:none; margin:0; border-radius:0;"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="exportBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 500px;">
+      <div class="dlg-head"><span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">package</span> Export Options</span></div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom: 8px;">Select specific items to export:</div>
+        <div id="exportChecklist" style="background: var(--surface-2); padding: 16px; border-radius: 8px; border: 1px solid var(--outline-2);"></div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="exportCancelBtn">Cancel</button>
+        <button class="btn" id="exportConfirmBtn"><span class="material-symbols-outlined">download</span> Download Export</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="importBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 500px;">
+      <div class="dlg-head"><span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">upload</span> Import Options</span></div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom: 12px; font-size: 14px;" id="importDetails">Found X tabs and Y items. How would you like to load them?</div>
+        
+        <label class="export-tab-label" style="border: 1px solid var(--outline-2); padding: 12px; border-radius: 8px; transition: border-color 0.2s ease;">
+          <input type="radio" name="importMode" value="append" checked>
+          <div>
+            <div style="font-weight:700;">Append as New Tabs</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:400;">Adds the imported tabs safely alongside your current ones.</div>
+          </div>
+        </label>
+
+        <label class="export-tab-label" style="border: 1px solid var(--outline-2); padding: 12px; border-radius: 8px; transition: border-color 0.2s ease;">
+          <input type="radio" name="importMode" value="merge">
+          <div>
+            <div style="font-weight:700;">Merge into Active Tab</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:400;">Pours all imported items directly into your currently open tab.</div>
+          </div>
+        </label>
+
+        <label class="export-tab-label" style="border: 1px solid var(--danger-border); padding: 12px; border-radius: 8px; transition: border-color 0.2s ease; background: var(--danger-hover);">
+          <input type="radio" name="importMode" value="replace">
+          <div>
+            <div style="font-weight:700; color:var(--danger);">Replace Current Session</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:400;">Wipes your current workspace entirely and loads the imported file exactly as it is.</div>
+          </div>
+        </label>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="importCancelBtn">Cancel</button>
+        <button class="btn" id="importConfirmBtn">Import Data</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="cfBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 600px;">
+      <div class="dlg-head"><span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">note_add</span> Create & Attach File</span></div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom:6px;">File Name</div>
+        <input class="input" id="cfName" placeholder="e.g., payload.xml, logs.txt, query.sql" style="margin-bottom: 12px;" />
+        <div class="label" style="margin-bottom:6px;">File Content</div>
+        <textarea class="input" id="cfContent" rows="8" placeholder="Paste your raw text, XML, JSON, or logs here..." style="resize: vertical; font-family: monospace;"></textarea>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn secondary" id="cfCancel">Cancel</button>
+        <button class="btn" id="cfOk">Attach File</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="filePreviewBackdrop" role="dialog" aria-modal="true" style="z-index: 1000;">
+    <div class="dlg" style="max-width: 800px; max-height: 90vh;">
+      <div class="dlg-head" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 16px;">
+        <span id="fpTitle" style="word-break: break-all;">File Preview</span>
+        <div>
+          <button class="btn secondary" id="fpCopyBtn" style="padding: 6px 12px; margin-right: 8px;"><span class="material-symbols-outlined">content_copy</span> Copy Text</button>
+          <button class="btn" id="fpDownloadBtn" style="padding: 6px 12px; margin-right: 8px;"><span class="material-symbols-outlined">download</span> Download</button>
+          <button class="btn secondary" id="fpCloseBtn" style="padding: 6px 12px;">Close</button>
+        </div>
+      </div>
+      <div class="dlg-body" style="padding: 0; background: var(--input-bg);">
+        <pre id="fpContent" style="margin: 0; padding: 16px; font-family: monospace; font-size: 13px; white-space: pre-wrap; word-wrap: break-word; color: var(--text);"></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="imgPreviewBackdrop" role="dialog" aria-modal="true" style="z-index: 1000; cursor: zoom-out;">
+    <img id="imgPreviewEl" src="" style="max-width: 90vw; max-height: 90vh; border-radius: 8px; box-shadow: var(--shadow-2); background: var(--surface);" />
+  </div>
+
+  <div class="dlg-backdrop" id="themeBackdrop" role="dialog" aria-modal="true">
+    <div class="dlg" style="max-width: 400px;">
+      <div class="dlg-head"><span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined">palette</span> Appearance Settings</span></div>
+      <div class="dlg-body">
+        <div class="label" style="margin-bottom: 10px;">Mode</div>
+        <div class="theme-grid">
+          <div class="theme-card" data-set-theme="light"><span class="material-symbols-outlined">light_mode</span> Light</div>
+          <div class="theme-card" data-set-theme="dark"><span class="material-symbols-outlined">dark_mode</span> Dark</div>
+        </div>
+        <div class="label" style="margin-bottom: 10px;">Accent Color</div>
+        <div class="color-grid" style="flex-wrap: wrap;">
+          <div class="color-swatch" data-set-color="blue" style="background: #2563eb;"></div>
+          <div class="color-swatch" data-set-color="green" style="background: #16a34a;"></div>
+          <div class="color-swatch" data-set-color="purple" style="background: #9333ea;"></div>
+          <div class="color-swatch" data-set-color="rose" style="background: #e11d48;"></div>
+          <div class="color-swatch" data-set-color="orange" style="background: #ea580c;"></div>
+          <div class="color-swatch" data-set-color="teal" style="background: #0d9488;"></div>
+          <div class="color-swatch" data-set-color="indigo" style="background: #4f46e5;"></div>
+          <div class="color-swatch" data-set-color="pink" style="background: #db2777;"></div>
+          <div class="color-swatch" data-set-color="cyan" style="background: #0891b2;"></div>
+        </div>
+      </div>
+      <div class="dlg-actions">
+        <button class="btn" id="themeClose">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="dlg-backdrop" id="helpBackdrop" role="dialog" aria-modal="true" style="z-index: 95;">
+    <div class="dlg" style="width: 95vw; max-width: 1400px; height: 95vh; display: flex; flex-direction: column; background: var(--bg);">
+      
+      <div class="dlg-head" style="display:flex; justify-content:space-between; align-items:center; background: var(--surface);">
+        <span style="display:flex; align-items:center; gap:8px;"><span class="material-symbols-outlined" style="color: var(--primary);">library_books</span> SnapSpace Documentation</span>
+        <button class="btn secondary" id="helpClose" style="padding: 6px 12px;">Close</button>
+      </div>
+
+      <div class="dlg-body" style="padding: 0; display: flex; flex: 1; overflow: hidden; flex-direction: row; position: relative;">
+        
+        <button class="btn secondary icon-only" id="docsMenuToggle" style="position: absolute; top: 12px; left: 16px; z-index: 20; display: none;"><span class="material-symbols-outlined">menu_open</span></button>
+        
+        <aside id="docsSidebar" style="width: 280px; border-right: 1px solid var(--outline-2); background: var(--surface); display: flex; flex-direction: column; flex-shrink: 0; overflow-y: auto;">
+          
+          <div style="padding: 10px 0; border-bottom: 1px solid var(--outline-2);">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; padding: 10px 20px;">User Guide</div>
+            <div class="docs-nav-item active" data-target="guide-intro"><span class="material-symbols-outlined">play_arrow</span> Getting Started</div>
+            <div class="docs-nav-item" data-target="guide-items"><span class="material-symbols-outlined">view_agenda</span> Managing Items</div>
+            <div class="docs-nav-item" data-target="guide-export"><span class="material-symbols-outlined">import_export</span> Import / Export</div>
+          </div>
+
+          <div style="padding: 10px 0;">
+            <div style="font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); font-weight: 700; padding: 10px 20px;">Technical Handoff</div>
+            <div class="docs-nav-item" data-target="tech-arch"><span class="material-symbols-outlined">architecture</span> Architecture</div>
+            <div class="docs-nav-item" data-target="tech-state"><span class="material-symbols-outlined">data_object</span> State Management</div>
+            <div class="docs-nav-item" data-target="tech-media"><span class="material-symbols-outlined">mimetype</span> Media Handling</div>
+          </div>
+        </aside>
+
+        <main id="docsMain" style="flex: 1; padding: 32px; overflow-y: auto; scroll-behavior: smooth;">
+          
+          <section id="guide-intro" class="docs-section active">
+            <h1>Getting Started with SnapSpace</h1>
+            <p>SnapSpace is a fully self-contained, offline-first workspace designed for capturing technical evidence, rapid note-taking, and documentation without relying on external servers.</p>
+            
+            <h2>Keyboard Shortcuts</h2>
+            <p>Windows 10 native conventions are supported to speed up data entry:</p>
+            <ul>
+              <li><code>Ctrl + V</code>: Paste images/screenshots directly into the Notes & Media area.</li>
+              <li><code>Ctrl + S</code>: Trigger the Workspace Export dialog.</li>
+              <li><code>Ctrl + O</code>: Open the Import Workspace dialog.</li>
+              <li><code>Alt + T</code>: Create a new tab.</li>
+              <li><code>Alt + N</code>: Add a new item to the current tab.</li>
+              <li><code>Alt + V</code>: Open Compare Mode side-by-side view.</li>
+            </ul>
+          </section>
+
+          <section id="guide-items" class="docs-section">
+            <h1>Managing Items & Media</h1>
+            <p>Items are the core building blocks of SnapSpace. They contain custom key-value fields and a rich text editor for storing visual and textual data.</p>
+            
+            <details>
+              <summary>Templates Engine</summary>
+              <div class="details-body">
+                Clicking the <b>Bookmark+</b> icon on any item header saves its current structure (Custom Fields and text/media) as a reusable Template. Access the Templates menu via the main menu to inject these saved structures into any active tab. Templates can also be exported and shared with team members as JSON files.
+              </div>
+            </details>
+            <details>
+              <summary>Drag and Drop</summary>
+              <div class="details-body">
+                You can drag the Tab buttons at the top of the screen left and right to reorder them. You can also grab any Item by the grab indicator next to its name and drag it up or down to reorganize your view.
+              </div>
+            </details>
+            <details>
+              <summary>Compare Mode</summary>
+              <div class="details-body">
+                Located in the main menu, Compare Mode splits the screen vertically. It allows you to select any two items from your workspace and evaluate their Notes & Media side-by-side with synchronized scrolling.
+              </div>
+            </details>
+          </section>
+
+          <section id="guide-export" class="docs-section">
+            <h1>Import, Export & Reset</h1>
+            <p>SnapSpace data never leaves your machine unless you explicitly export it.</p>
+            
+            <h3>Exporting</h3>
+            <p>Clicking <b>Export Workspace</b> opens a checklist where you can granularly select which tabs and items to include. The output is a standalone HTML file containing a read-only viewer and a hidden JSON payload.</p>
+            
+            <h3>Importing Strategies</h3>
+            <p>When loading a previously exported HTML file, you are given three merge strategies:</p>
+            <ul>
+              <li><b>Append:</b> Adds the imported tabs alongside your existing ones.</li>
+              <li><b>Merge:</b> Drops all imported items directly into your currently active tab.</li>
+              <li><b>Replace:</b> Overwrites the current board entirely with the imported data.</li>
+            </ul>
+          </section>
+
+          <section id="tech-arch" class="docs-section">
+            <h1>Architecture Overview <span class="docs-badge">For UI Team</span></h1>
+            <p>SnapSpace is designed as a zero-dependency, single-file application. HTML, CSS (using CSS variables for theming), and vanilla JavaScript are bundled into one document. This ensures that an exported report is entirely self-sufficient.</p>
+            
+            <h2>Core Principles</h2>
+            <ul>
+              <li><b>No Build Step:</b> Direct DOM manipulation using <code>document.createElement</code> and <code>innerHTML</code>.</li>
+              <li><b>Event Delegation:</b> A single global <code>click</code> listener handles interactions based on <code>data-*</code> attributes.</li>
+              <li><b>Offline First:</b> Everything operates via <code>localStorage</code> and File APIs.</li>
+            </ul>
+          </section>
+
+          <section id="tech-state" class="docs-section">
+            <h1>State Management</h1>
+            <p>The application relies on a single source of truth stored in memory and synced to <code>localStorage</code> after every mutation.</p>
+            
+            <h3>State Object Structure</h3>
+<pre>
+let state = {
+  activeTabId: "uuid-string",
+  tabs: [
+    {
+      id: "uuid-string",
+      name: "Tab 1",
+      scenarios: [  // Internal variable mapping to "Items"
+        {
+          id: "uuid-string",
+          name: "Item Name",
+          fields: [{ id: "uuid", key: "Env", val: "Prod" }],
+          evidenceHtml: "<div>Rich text and images...</div>",
+          isOpen: true
+        }
+      ]
+    }
+  ]
+}
+</pre>
+            
+            <h3>Rendering Loop</h3>
+            <p>When the state mutates, <code>render()</code> is called. This triggers <code>renderTabs()</code> and <code>renderPanel()</code>, completely tearing down and rebuilding the DOM elements. Input focus states are preserved using a small timeout hack after rendering.</p>
+          </section>
+
+          <section id="tech-media" class="docs-section">
+            <h1>Media & File Handling</h1>
+            <p>To prevent browser memory leaks associated with <code>URL.createObjectURL()</code>, files and images are never stored as temporary browser references.</p>
+
+            <h2>Base64 Encoding</h2>
+            <p>When an image is pasted or a file is attached, the <code>FileReader</code> API converts the binary data into a Base64 Data URL string. This string is injected directly into the HTML payload.</p>
+            <p>When a user deletes a file from the WYSIWYG editor using the backspace key, the DOM node is removed. The <code>input</code> event listener catches the DOM mutation, saves the new HTML string to the state, and the JavaScript Garbage Collector automatically clears the unreferenced memory.</p>
+          </section>
+
+        </main>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ========= Theme Engine ========= */
+const rootParams = document.documentElement;
+let currentTheme = localStorage.getItem('test_recorder_theme') || 'light';
+let currentColor = localStorage.getItem('test_recorder_color') || 'blue';
+
+function applyTheme() {
+  rootParams.setAttribute('data-theme', currentTheme);
+  rootParams.setAttribute('data-color', currentColor);
+  localStorage.setItem('test_recorder_theme', currentTheme);
+  localStorage.setItem('test_recorder_color', currentColor);
+  
+  document.querySelectorAll('[data-set-theme]').forEach(el => { el.classList.toggle('active', el.dataset.setTheme === currentTheme); });
+  document.querySelectorAll('[data-set-color]').forEach(el => { el.classList.toggle('active', el.dataset.setColor === currentColor); });
+}
+applyTheme();
+
+const themeBtn = document.getElementById("themeBtn");
+const themeBackdrop = document.getElementById("themeBackdrop");
+const themeClose = document.getElementById("themeClose");
+themeBtn.addEventListener("click", () => { document.getElementById("mainMenuDropdown").classList.remove("show"); themeBackdrop.style.display = "flex"; });
+themeClose.addEventListener("click", () => { themeBackdrop.style.display = "none"; });
+themeBackdrop.addEventListener("click", (e) => { if(e.target === themeBackdrop) themeBackdrop.style.display = "none"; });
+document.querySelectorAll('[data-set-theme]').forEach(el => { el.addEventListener('click', (e) => { currentTheme = e.target.dataset.setTheme; applyTheme(); }); });
+document.querySelectorAll('[data-set-color]').forEach(el => { el.addEventListener('click', (e) => { currentColor = e.target.dataset.setColor; applyTheme(); }); });
+
+/* ========= Hamburger Menu ========= */
+const mainMenuBtn = document.getElementById("mainMenuBtn");
+const mainMenuDropdown = document.getElementById("mainMenuDropdown");
+mainMenuBtn.addEventListener("click", (e) => { e.stopPropagation(); mainMenuDropdown.classList.toggle("show"); });
+document.addEventListener("click", (e) => { if (!mainMenuDropdown.contains(e.target) && e.target !== mainMenuBtn) mainMenuDropdown.classList.remove("show"); });
+
+/* ========= Async Database Engine (IndexedDB) ========= */
+const DB_NAME = "SnapSpaceDB";
+const STORE_NAME = "workspace";
+const DB_VERSION = 1;
+const STATE_KEY = "test_recorder_tabs_v17";
+
+let dbInstance = null;
+
+// Initialize the local database
+function initDB() {
+    return new Promise((resolve, reject) => {
+        if (dbInstance) return resolve(dbInstance);
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onerror = (e) => reject("DB Error: " + e.target.errorCode);
+        request.onsuccess = (e) => { dbInstance = e.target.result; resolve(dbInstance); };
+        request.onupgradeneeded = (e) => {
+            const db = e.target.result;
+            if (!db.objectStoreNames.contains(STORE_NAME)) {
+                db.createObjectStore(STORE_NAME);
+            }
+        };
+    });
+}
+
+// Asynchronous Save
+async function saveState() {
+    try {
+        const db = await initDB();
+        const tx = db.transaction(STORE_NAME, "readwrite");
+        const store = tx.objectStore(STORE_NAME);
+        store.put(JSON.stringify(state), STATE_KEY);
+        
+        // Show auto-save indicator
+        const ind = document.getElementById("saveIndicator");
+        if(ind) {
+            ind.style.opacity = "1";
+            clearTimeout(ind.timer);
+            ind.timer = setTimeout(() => ind.style.opacity = "0", 2000);
+        }
+    } catch (err) {
+        console.error("Failed to save state:", err);
+    }
+}
+
+// Asynchronous Load
+async function loadStateFromDB() {
+    return new Promise(async (resolve) => {
+        try {
+            const db = await initDB();
+            const tx = db.transaction(STORE_NAME, "readonly");
+            const store = tx.objectStore(STORE_NAME);
+            const request = store.get(STATE_KEY);
+            
+            request.onsuccess = () => {
+                if (request.result) resolve(JSON.parse(request.result));
+                else resolve(null);
+            };
+            request.onerror = () => resolve(null);
+        } catch (err) {
+            resolve(null);
+        }
+    });
+}
+
+/* ========= State Initialization ========= */
+let lastFocusedScenarioId = null; 
+let targetScenarioForFile = null; 
+let pendingImportData = null; 
+let savedRange = null; 
+let state = null; // Will be populated asynchronously
+
+let templates = JSON.parse(localStorage.getItem('test_recorder_templates') || '[]');
+function saveTemplates(){ localStorage.setItem('test_recorder_templates', JSON.stringify(templates)); }
+function uid(){ return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+// Boot up the application
+async function bootApp() {
+    state = await loadStateFromDB();
+    
+    // Fallback migration from old localStorage if user is upgrading
+    if (!state) {
+        try { 
+            const oldLocal = localStorage.getItem(STATE_KEY);
+            if (oldLocal) state = JSON.parse(oldLocal); 
+        } catch (e) {}
+    }
+
+    // Default empty state
+    if (!state) {
+        state = {
+            activeTabId: null,
+            tabs: [{ id: uid(), name: "Tab 1", scenarios: [{ id: uid(), name:"", fields: [], evidenceHtml:"", isOpen: true }] }]
+        };
+    }
+    
+    if (!state.activeTabId && state.tabs.length > 0) {
+        state.activeTabId = state.tabs[0].id;
+    }
+    
+    render(); // Draw the UI now that data is loaded
+}
+
+
+/* ========= Reset Data Button ========= */
+const resetBtn = document.getElementById("resetBtn");
+resetBtn.addEventListener("click", () => {
+    if(confirm("Are you sure you want to reset the board? This will delete all tabs and items.\n\nNote: Your saved Templates will NOT be deleted.")) {
+        state = {
+            activeTabId: null,
+            tabs: [{ id: uid(), name: "Tab 1", scenarios: [{ id: uid(), name:"", fields: [], evidenceHtml:"", isOpen: true }] }]
+        };
+        state.activeTabId = state.tabs[0].id;
+        render();
+    }
+});
+
+/* ========= Rendering ========= */
+const tabsEl = document.getElementById("tabs");
+const panelEl = document.getElementById("panel");
+
+function activeTab(){ return state.tabs.find(t => t.id === state.activeTabId); }
+
+function render(){ renderTabs(); renderPanel(); saveState(); }
+
+let draggedTabIdx = null;
+function renderTabs(){
+  tabsEl.innerHTML = "";
+  state.tabs.forEach((tab, index) => {
+    const btn = document.createElement("button");
+    btn.className = "tab" + (tab.id === state.activeTabId ? " active" : "");
+    btn.type = "button";
+    btn.innerHTML = `<span>${escapeHtml(tab.name)}</span>${state.tabs.length > 1 ? `<span class="x" title="Close tab" data-close-tab="${tab.id}">×</span>` : ``}`;
+    
+    // Drag & Drop for Tabs
+    btn.draggable = true;
+    btn.ondragstart = (e) => { draggedTabIdx = index; e.dataTransfer.effectAllowed = 'move'; setTimeout(()=>btn.classList.add('dragging'), 0); };
+    btn.ondragend = () => { draggedTabIdx = null; btn.classList.remove('dragging'); };
+    btn.ondragover = (e) => { e.preventDefault(); btn.classList.add('drag-over'); };
+    btn.ondragleave = () => { btn.classList.remove('drag-over'); };
+    btn.ondrop = (e) => {
+        e.preventDefault(); btn.classList.remove('drag-over');
+        if (draggedTabIdx !== null && draggedTabIdx !== index) {
+            const moved = state.tabs.splice(draggedTabIdx, 1)[0];
+            state.tabs.splice(index, 0, moved);
+            render();
+        }
+    };
+
+    btn.addEventListener("click", (e) => {
+      const close = e.target.closest("[data-close-tab]");
+      if (close){ e.stopPropagation(); closeTab(close.getAttribute("data-close-tab")); return; }
+      state.activeTabId = tab.id; render();
+    });
+    tabsEl.appendChild(btn);
+  });
+  const plus = document.createElement("button");
+  plus.className = "tab plus"; plus.type = "button"; plus.textContent = "＋ New tab";
+  plus.addEventListener("click", () => promptNewTab());
+  tabsEl.appendChild(plus);
+}
+
+function renderPanel(){
+  panelEl.innerHTML = "";
+  state.tabs.forEach(tab => {
+    const wrap = document.createElement("div");
+    wrap.className = "tab-panel";
+    if (tab.id === state.activeTabId) wrap.style.display = "block";
+    tab.scenarios.forEach((sc, idx) => { wrap.appendChild(renderScenarioCard(sc, idx)); });
+    panelEl.appendChild(wrap);
+  });
+  const active = activeTab();
+  if (active) document.getElementById("panelMeta").innerHTML = `<span class="material-symbols-outlined" style="font-size: 16px;">lightbulb</span> Active: ${active.name} • Items: ${active.scenarios.length} • Paste screenshots in Notes. Drag tabs & items to reorder.`;
+}
+
+function renderScenarioCard(sc, idx){
+  const d = document.createElement("details");
+  d.className = "scenario"; d.dataset.sid = sc.id; d.open = sc.isOpen !== false; 
+  d.draggable = false; // Prevent selection block by default
+  
+  // Drag & Drop for Scenarios
+  d.ondragstart = (e) => {
+      e.dataTransfer.setData('text/plain', idx);
+      e.dataTransfer.effectAllowed = 'move';
+      setTimeout(() => d.classList.add('dragging'), 0);
+  };
+  d.ondragend = () => { 
+      d.classList.remove('dragging'); 
+      d.draggable = false; // Reset drag state to free up input selection
+  };
+  d.ondragover = (e) => { e.preventDefault(); d.classList.add('drag-over-scenario'); };
+  d.ondragleave = () => { d.classList.remove('drag-over-scenario'); };
+  d.ondrop = (e) => {
+      e.preventDefault(); d.classList.remove('drag-over-scenario');
+      d.draggable = false;
+      const fromIdx = parseInt(e.dataTransfer.getData('text/plain'));
+      if (!isNaN(fromIdx) && fromIdx !== idx) {
+          const tab = activeTab();
+          const moved = tab.scenarios.splice(fromIdx, 1)[0];
+          tab.scenarios.splice(idx, 0, moved);
+          render();
+      }
+  };
+
+  const validFields = (sc.fields || []).filter(f => f.key.trim() || f.val.trim());
+  const tagsHtml = validFields.map(f => `<span class="tag"><b>${escapeHtml(f.key || "Field")}:</b> ${escapeHtml(f.val || "-")}</span>`).join("");
+
+  const fieldsHtml = (sc.fields || []).map(f => `
+    <div class="field-row">
+      <input class="input" data-fkey="${f.id}" data-sid="${sc.id}" value="${escapeAttr(f.key)}" placeholder="Field Name (e.g., Env, Policy)" />
+      <input class="input" data-fval="${f.id}" data-sid="${sc.id}" value="${escapeAttr(f.val)}" placeholder="Value" />
+      <button class="btn secondary del action-btn icon-only" type="button" data-delfield="${f.id}" data-sid="${sc.id}"><span class="material-symbols-outlined">close</span></button>
+    </div>
+  `).join("");
+
+  d.innerHTML = `
+    <summary>
+      <div class="summary-content">
+        <div style="display:flex; align-items:center; gap:6px; width: 100%;">
+          <div style="font-weight: 750; font-size: 14px; color: var(--text); white-space:nowrap;">
+            <span class="material-symbols-outlined" style="font-size: 16px; cursor: grab; color: var(--muted); margin-right: 4px;" onmousedown="this.closest('details').draggable=true" onmouseup="this.closest('details').draggable=false" onmouseleave="this.closest('details').draggable=false">drag_indicator</span>
+            Item ${idx+1}
+          </div>
+          <span style="color: var(--muted); font-weight: 400;">—</span>
+          <input class="header-name-input" data-field="name" data-sid="${sc.id}" value="${escapeAttr(sc.name||"")}" placeholder="Item Name..." onclick="event.stopPropagation()" />
+        </div>
+        ${tagsHtml ? `<div class="summary-tags">${tagsHtml}</div>` : `<div class="summary-sub">Click to expand/collapse</div>`}
+      </div>
+      <div class="summary-actions">
+        <button class="btn secondary action-btn icon-only" type="button" title="Save as Template" data-template="${sc.id}"><span class="material-symbols-outlined">bookmark_add</span></button>
+        <button class="btn secondary action-btn icon-only" type="button" title="Duplicate Item" data-duplicate="${sc.id}"><span class="material-symbols-outlined">content_copy</span></button>
+        <button class="btn secondary action-btn icon-only" type="button" title="Move to Tab" data-move="${sc.id}"><span class="material-symbols-outlined">move_item</span></button>
+        <button class="btn secondary action-btn" type="button" data-createfile="${sc.id}" title="Create Text/XML File"><span class="material-symbols-outlined">note_add</span> New File</button>
+        <button class="btn secondary action-btn" type="button" data-attach="${sc.id}"><span class="material-symbols-outlined">attach_file</span> Attach</button>
+        <button class="btn danger action-btn icon-only" type="button" title="Delete Item" data-delete="${sc.id}"><span class="material-symbols-outlined">delete</span></button>
+        <div class="chev"><span class="material-symbols-outlined">expand_more</span></div>
+      </div>
+    </summary>
+
+    <div class="card-body">
+      <div class="label"><span class="material-symbols-outlined" style="font-size: 14px;">tune</span> Properties</div>
+      <div class="field-list">
+        ${fieldsHtml}
+        <div><button class="btn secondary action-btn" type="button" data-addfield="${sc.id}" style="font-size: 12px; padding: 6px 12px;"><span class="material-symbols-outlined">add</span> Add Field</button></div>
+      </div>
+
+      <div class="evidence-wrap">
+        <div class="label" style="margin-bottom: 6px;"><span class="material-symbols-outlined" style="font-size: 14px;">image</span> Notes & Media</div>
+        <div class="wysiwyg-toolbar action-btn">
+           <button class="btn secondary" type="button" data-cmd="bold" title="Bold"><span class="material-symbols-outlined" style="margin:0;">format_bold</span></button>
+           <button class="btn secondary" type="button" data-cmd="italic" title="Italic"><span class="material-symbols-outlined" style="margin:0;">format_italic</span></button>
+           <button class="btn secondary" type="button" data-cmd="insertUnorderedList" title="Bullet List"><span class="material-symbols-outlined" style="margin:0;">format_list_bulleted</span> List</button>
+        </div>
+        <div class="evidence" contenteditable="true" data-evidence="${sc.id}" spellcheck="false"></div>
+        <div class="hint"><span class="material-symbols-outlined" style="font-size: 14px;">info</span> Paste screenshots (Ctrl+V) or use the toolbar to format. Double-click images to view full size.</div>
+        <input type="file" hidden data-file="${sc.id}" />
+      </div>
+    </div>
+  `;
+
+  const evidence = d.querySelector(`[data-evidence="${sc.id}"]`);
+  evidence.innerHTML = sc.evidenceHtml || "";
+
+  let htmlUpdated = false;
+  evidence.querySelectorAll('.attachment').forEach(att => {
+    if(!att.querySelector('.copy-att')) {
+      const link = att.querySelector('a');
+      if(link && link.dataset.dataurl) {
+        const copyBtn = document.createElement("span");
+        copyBtn.className = "copy-att material-symbols-outlined"; copyBtn.textContent = "content_copy"; 
+        copyBtn.title = "Copy content"; copyBtn.dataset.copy = link.dataset.dataurl;
+        copyBtn.contentEditable = "false";
+        att.appendChild(copyBtn);
+        htmlUpdated = true;
+      }
+    }
+  });
+  if (htmlUpdated) { sc.evidenceHtml = evidence.innerHTML; saveState(); }
+
+  return d;
+}
+
+/* ========= Interactions ========= */
+
+document.addEventListener("mousedown", (e) => { if (e.target.closest('[data-cmd]')) { e.preventDefault(); } });
+
+function updateToolbarState() {
+  document.querySelectorAll('.wysiwyg-toolbar .btn').forEach(b => b.classList.remove('active-format'));
+  const sel = window.getSelection(); if (!sel.rangeCount) return; let node = sel.anchorNode; if (!node) return; if (node.nodeType === 3) node = node.parentElement;
+  const ev = node.closest('.evidence');
+  if (ev) {
+    const toolbar = ev.previousElementSibling;
+    if (toolbar && toolbar.classList.contains('wysiwyg-toolbar')) {
+       ['bold', 'italic', 'insertUnorderedList'].forEach(cmd => {
+          if (document.queryCommandState(cmd)) { const btn = toolbar.querySelector(`[data-cmd="${cmd}"]`); if (btn) btn.classList.add('active-format'); }
+       });
+    }
+  }
+}
+
+document.addEventListener("selectionchange", () => {
+  updateToolbarState();
+  const sel = window.getSelection();
+  if (sel.rangeCount > 0) {
+    let node = sel.commonAncestorContainer;
+    if (node.nodeType === 3) node = node.parentNode;
+    if (node && node.closest && node.closest('.evidence')) { savedRange = sel.getRangeAt(0); }
+  }
+});
+
+function restoreSelectionAndInsert(ev, html) {
+  ev.focus();
+  if (savedRange && savedRange.commonAncestorContainer) {
+    let node = savedRange.commonAncestorContainer;
+    if (node.nodeType === 3) node = node.parentNode;
+    if (node && node.closest && node.closest('.evidence') === ev) {
+       const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(savedRange);
+    } else { moveCursorToEnd(ev); }
+  } else { moveCursorToEnd(ev); }
+  document.execCommand("insertHTML", false, html);
+  persistEvidence(ev);
+}
+
+document.addEventListener("focusin", (e) => { const scWrapper = e.target.closest(".scenario"); if (scWrapper) lastFocusedScenarioId = scWrapper.dataset.sid; });
+
+// Interactive Integrated Docs Logic
+const helpBtn = document.getElementById("helpBtn");
+const helpBackdrop = document.getElementById("helpBackdrop");
+const helpClose = document.getElementById("helpClose");
+const docsNavItems = document.querySelectorAll('.docs-nav-item');
+const docsSections = document.querySelectorAll('.docs-section');
+const docsSidebar = document.getElementById('docsSidebar');
+const docsMenuToggle = document.getElementById('docsMenuToggle');
+const docsMain = document.getElementById('docsMain');
+
+helpBtn.addEventListener("click", () => { 
+  document.getElementById("mainMenuDropdown").classList.remove("show"); 
+  helpBackdrop.style.display = "flex"; 
+});
+helpClose.addEventListener("click", () => { helpBackdrop.style.display = "none"; });
+helpBackdrop.addEventListener("click", (e) => { if(e.target === helpBackdrop) helpBackdrop.style.display = "none"; });
+
+docsNavItems.forEach(item => {
+  item.addEventListener('click', () => {
+    docsNavItems.forEach(nav => nav.classList.remove('active'));
+    docsSections.forEach(sec => sec.classList.remove('active'));
+    
+    item.classList.add('active');
+    document.getElementById(item.dataset.target).classList.add('active');
+    docsMain.scrollTop = 0;
+    
+    if (window.innerWidth <= 768) { docsSidebar.classList.remove('open'); }
+  });
+});
+
+docsMenuToggle.addEventListener('click', () => { docsSidebar.classList.toggle('open'); });
+
+// File Preview & Image Lightbox Modals
+const fpBackdrop = document.getElementById("filePreviewBackdrop");
+const fpCloseBtn = document.getElementById("fpCloseBtn");
+const fpCopyBtn = document.getElementById("fpCopyBtn");
+fpCloseBtn.addEventListener("click", () => { fpBackdrop.style.display = "none"; });
+fpBackdrop.addEventListener("click", (e) => { if(e.target === fpBackdrop) fpBackdrop.style.display = "none"; });
+
+fpCopyBtn.addEventListener("click", async () => {
+  const textToCopy = document.getElementById("fpContent").textContent;
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(textToCopy);
+    } else {
+      // Robust Fallback for Android WebViews & local file://
+      const textArea = document.createElement("textarea");
+      textArea.value = textToCopy;
+      textArea.style.position = "fixed";
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+    const orig = fpCopyBtn.innerHTML; fpCopyBtn.innerHTML = `<span class="material-symbols-outlined">check_circle</span> Copied!`;
+    setTimeout(() => { fpCopyBtn.innerHTML = orig; }, 1500);
+  } catch(err) { alert("Failed to copy text. Your browser may block this feature."); }
+});
+
+const imgBackdrop = document.getElementById("imgPreviewBackdrop");
+imgBackdrop.addEventListener("click", () => { imgBackdrop.style.display = "none"; });
+
+let imgClickTimer = null;
+document.addEventListener("click", (e) => {
+  const img = e.target.closest(".evidence img"); if (!img) return;
+  if (e.detail > 1) return; 
+  
+  clearTimeout(imgClickTimer);
+  imgClickTimer = setTimeout(() => {
+    let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%";
+    const ev = img.closest('.evidence');
+    if (ev) persistEvidence(ev); 
+  }, 200);
+});
+
+document.addEventListener("dblclick", (e) => {
+  const img = e.target.closest(".evidence img");
+  if (img) { 
+    clearTimeout(imgClickTimer);
+    document.getElementById("imgPreviewEl").src = img.src; 
+    imgBackdrop.style.display = "flex"; 
+    window.getSelection().removeAllRanges(); 
+  }
+});
+
+// ========= TEMPLATES ENGINE =========
+const tplOpenBtn = document.getElementById("tplOpenBtn");
+const tplBackdrop = document.getElementById("tplBackdrop");
+const tplCloseBtn = document.getElementById("tplCloseBtn");
+const tplListEl = document.getElementById("tplList");
+const tplExportTrigger = document.getElementById("tplExportTrigger");
+const tplImportTrigger = document.getElementById("tplImportTrigger");
+const tplImportFile = document.getElementById("tplImportFile");
+
+function renderTemplates() {
+    tplListEl.innerHTML = '';
+    if(templates.length === 0) {
+        tplListEl.innerHTML = '<div style="color:var(--muted); font-style:italic; padding: 10px;">No templates saved. Save one from an item card header!</div>';
+        return;
+    }
+    templates.forEach(t => {
+        const div = document.createElement("div"); div.className = "tpl-item";
+        div.innerHTML = `
+            <div>
+                <div class="tpl-name">${escapeHtml(t.name)}</div>
+                <div class="tpl-meta">${t.data.fields.length} Fields • ${t.data.evidenceHtml ? "Has Content" : "No Content"}</div>
+            </div>
+            <div style="display:flex; gap:6px;">
+                <button class="btn secondary" style="padding:6px 10px; font-size:12px;" data-use-tpl="${t.id}">Use Template</button>
+                <button class="btn danger icon-only" data-del-tpl="${t.id}"><span class="material-symbols-outlined">delete</span></button>
+            </div>
+        `;
+        tplListEl.appendChild(div);
+    });
+}
+
+tplOpenBtn.addEventListener("click", () => { document.getElementById("mainMenuDropdown").classList.remove("show"); renderTemplates(); tplBackdrop.style.display = "flex"; });
+tplCloseBtn.addEventListener("click", () => { tplBackdrop.style.display = "none"; });
+tplBackdrop.addEventListener("click", (e) => { if(e.target === tplBackdrop) tplBackdrop.style.display = "none"; });
+
+tplListEl.addEventListener("click", (e) => {
+    const useBtn = e.target.closest("[data-use-tpl]");
+    if (useBtn) {
+        const tpl = templates.find(x => x.id === useBtn.dataset.useTpl);
+        if (tpl) {
+            const clone = JSON.parse(JSON.stringify(tpl.data));
+            clone.id = uid();
+            clone.name = clone.name || tpl.name;
+            clone.fields.forEach(f => f.id = uid());
+            activeTab().scenarios.push(clone);
+            render(); tplBackdrop.style.display = "none";
+        }
+        return;
+    }
+    const delBtn = e.target.closest("[data-del-tpl]");
+    if (delBtn) {
+        templates = templates.filter(x => x.id !== delBtn.dataset.delTpl);
+        saveTemplates(); renderTemplates();
+    }
+});
+
+tplExportTrigger.addEventListener("click", () => {
+    const blob = new Blob([JSON.stringify(templates)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "item_templates.json";
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+});
+
+tplImportTrigger.addEventListener("click", () => tplImportFile.click());
+tplImportFile.addEventListener("change", (e) => {
+    const file = e.target.files[0]; if(!file) return;
+    const r = new FileReader();
+    r.onload = (event) => {
+        try {
+            const loaded = JSON.parse(event.target.result);
+            if(Array.isArray(loaded)) {
+                // simple merge
+                loaded.forEach(l => { l.id = uid(); templates.push(l); });
+                saveTemplates(); renderTemplates(); alert("Templates imported successfully!");
+            }
+        } catch(err) { alert("Invalid template JSON file."); }
+    };
+    r.readAsText(file); e.target.value = '';
+});
+
+// ========= MOVE SCENARIO MODAL =========
+const moveBackdrop = document.getElementById("moveBackdrop");
+const moveSelect = document.getElementById("moveSelect");
+const moveCancelBtn = document.getElementById("moveCancelBtn");
+const moveConfirmBtn = document.getElementById("moveConfirmBtn");
+let scenarioToMoveId = null;
+
+function openMoveDialog(sid) {
+    const otherTabs = state.tabs.filter(t => t.id !== state.activeTabId);
+    if(otherTabs.length === 0) { alert("No other tabs available. Create a new tab first."); return; }
+    
+    moveSelect.innerHTML = otherTabs.map(t => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
+    scenarioToMoveId = sid;
+    moveBackdrop.style.display = 'flex';
+}
+moveCancelBtn.addEventListener("click", () => { moveBackdrop.style.display = 'none'; scenarioToMoveId = null; });
+moveBackdrop.addEventListener("click", (e) => { if(e.target === moveBackdrop) moveCancelBtn.click(); });
+moveConfirmBtn.addEventListener("click", () => {
+    const destTabId = moveSelect.value;
+    if(!scenarioToMoveId || !destTabId) return;
+    const srcTab = activeTab(); const destTab = state.tabs.find(t => t.id === destTabId);
+    if(srcTab && destTab) {
+        const scIdx = srcTab.scenarios.findIndex(s => s.id === scenarioToMoveId);
+        if(scIdx >= 0) {
+            const sc = srcTab.scenarios.splice(scIdx, 1)[0];
+            destTab.scenarios.push(sc);
+            render();
+        }
+    }
+    moveBackdrop.style.display = 'none'; scenarioToMoveId = null;
+});
+
+// ========= COMPARE MODE LOGIC =========
+const compareBtn = document.getElementById("compareBtn");
+const compBackdrop = document.getElementById("compareBackdrop");
+const compCloseBtn = document.getElementById("compCloseBtn");
+
+const compLeftTab = document.getElementById("compLeftTab");
+const compLeftScen = document.getElementById("compLeftScen");
+const compLeftEv = document.getElementById("compLeftEv");
+
+const compRightTab = document.getElementById("compRightTab");
+const compRightScen = document.getElementById("compRightScen");
+const compRightEv = document.getElementById("compRightEv");
+
+function populateCompareSelects() {
+  compLeftTab.innerHTML = ''; compRightTab.innerHTML = '';
+  state.tabs.forEach((t, idx) => {
+    const optionHTML = `<option value="${t.id}">${escapeHtml(t.name || `Tab ${idx+1}`)}</option>`;
+    compLeftTab.innerHTML += optionHTML;
+    compRightTab.innerHTML += optionHTML;
+  });
+  updateCompScenarios(compLeftTab, compLeftScen);
+  updateCompScenarios(compRightTab, compRightScen);
+}
+
+function updateCompScenarios(tabSelect, scenSelect) {
+  const t = state.tabs.find(x => x.id === tabSelect.value);
+  scenSelect.innerHTML = '';
+  if(t) {
+    t.scenarios.forEach((sc, idx) => {
+      const name = (sc.name || "").trim();
+      const label = name ? `Item ${idx+1} — ${name}` : `Item ${idx+1}`;
+      scenSelect.innerHTML += `<option value="${sc.id}">${escapeHtml(label)}</option>`;
+    });
+  }
+}
+
+function renderCompEv(scenSelect, evDiv) {
+   let found = null;
+   for(let t of state.tabs) {
+     let sc = t.scenarios.find(x => x.id === scenSelect.value);
+     if(sc) { found = sc; break; }
+   }
+   evDiv.innerHTML = found ? found.evidenceHtml : '<div style="color:var(--muted); font-style:italic;">No content found.</div>';
+}
+
+compLeftTab.addEventListener('change', () => { updateCompScenarios(compLeftTab, compLeftScen); renderCompEv(compLeftScen, compLeftEv); });
+compLeftScen.addEventListener('change', () => { renderCompEv(compLeftScen, compLeftEv); });
+
+compRightTab.addEventListener('change', () => { updateCompScenarios(compRightTab, compRightScen); renderCompEv(compRightScen, compRightEv); });
+compRightScen.addEventListener('change', () => { renderCompEv(compRightScen, compRightEv); });
+
+compareBtn.addEventListener('click', () => {
+  document.getElementById("mainMenuDropdown").classList.remove("show");
+  populateCompareSelects();
+  if(state.tabs.length > 0) {
+    renderCompEv(compLeftScen, compLeftEv);
+    renderCompEv(compRightScen, compRightEv);
+  }
+  compBackdrop.style.display = 'flex';
+});
+
+compCloseBtn.addEventListener('click', () => { compBackdrop.style.display = 'none'; });
+
+// Sync Scroll
+const compSync = document.getElementById('compSync');
+let isSyncingLeft = false, isSyncingRight = false;
+
+compLeftEv.addEventListener('scroll', () => {
+   if(!compSync.checked || isSyncingLeft) { isSyncingLeft = false; return; }
+   isSyncingRight = true;
+   const percentage = compLeftEv.scrollTop / (compLeftEv.scrollHeight - compLeftEv.clientHeight || 1);
+   compRightEv.scrollTop = percentage * (compRightEv.scrollHeight - compRightEv.clientHeight);
+});
+
+compRightEv.addEventListener('scroll', () => {
+   if(!compSync.checked || isSyncingRight) { isSyncingRight = false; return; }
+   isSyncingLeft = true;
+   const percentage = compRightEv.scrollTop / (compRightEv.scrollHeight - compRightEv.clientHeight || 1);
+   compLeftEv.scrollTop = percentage * (compLeftEv.scrollHeight - compLeftEv.clientHeight);
+});
+
+// Create File Dialog
+const cfBackdrop = document.getElementById('cfBackdrop');
+const cfName = document.getElementById('cfName');
+const cfContent = document.getElementById('cfContent');
+const cfCancel = document.getElementById('cfCancel');
+const cfOk = document.getElementById('cfOk');
+
+function openCreateFileDialog(sid) {
+  targetScenarioForFile = sid; cfName.value = ''; cfContent.value = '';
+  cfBackdrop.style.display = 'flex'; setTimeout(() => cfName.focus(), 50);
+}
+cfCancel.addEventListener('click', () => { cfBackdrop.style.display = 'none'; targetScenarioForFile = null; });
+cfBackdrop.addEventListener('click', (e) => { if (e.target === cfBackdrop) cfCancel.click(); });
+cfOk.addEventListener('click', () => {
+  const name = cfName.value.trim() || 'document.txt'; const content = cfContent.value;
+  if(!content) { alert("File content cannot be empty."); return; }
+  const ev = document.querySelector(`.evidence[data-evidence="${targetScenarioForFile}"]`);
+  if(ev) {
+    const blob = new Blob([content], { type: 'text/plain' }); const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result; 
+      const html = `<span class="attachment" contenteditable="false"><a href="${dataUrl}" download="${name}" data-name="${name}" data-dataurl="${dataUrl}"><span class="material-symbols-outlined" style="font-size:16px;">attachment</span> ${name}</a><span class="copy-att material-symbols-outlined" title="Copy file" data-copy="${dataUrl}" contenteditable="false">content_copy</span></span>&nbsp;`;
+      restoreSelectionAndInsert(ev, html);
+    }; reader.readAsDataURL(blob);
+  }
+  cfBackdrop.style.display = 'none'; targetScenarioForFile = null;
+});
+
+// ========= IMPORT LOGIC (Smart Merge + Suffixes) =========
+const importBtn = document.getElementById("importBtn");
+const importInput = document.getElementById("importInput");
+const importBackdrop = document.getElementById("importBackdrop");
+const importCancelBtn = document.getElementById("importCancelBtn");
+const importConfirmBtn = document.getElementById("importConfirmBtn");
+
+importBtn.addEventListener("click", () => { importInput.click(); });
+importInput.addEventListener("change", (e) => {
+  const file = e.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    try {
+      const parser = new DOMParser(); const doc = parser.parseFromString(event.target.result, "text/html");
+      const payloadEl = doc.getElementById('data-payload');
+      if (payloadEl) {
+        pendingImportData = JSON.parse(payloadEl.textContent);
+        if (pendingImportData && pendingImportData.tabs) {
+          const tCount = pendingImportData.tabs.length;
+          const sCount = pendingImportData.tabs.reduce((sum, t) => sum + t.scenarios.length, 0);
+          document.getElementById("importDetails").textContent = `Found ${tCount} tab(s) and ${sCount} item(s). How would you like to load them?`;
+          importBackdrop.style.display = "flex";
+        } else { alert("Invalid export format."); }
+      } else { alert("No data found in this HTML file."); }
+    } catch (err) { alert("Error reading file."); }
+    e.target.value = ""; 
+  };
+  reader.readAsText(file);
+});
+
+importCancelBtn.addEventListener("click", () => { importBackdrop.style.display = "none"; pendingImportData = null; });
+importBackdrop.addEventListener("click", (e) => { if(e.target === importBackdrop) importCancelBtn.click(); });
+
+importConfirmBtn.addEventListener("click", () => {
+  if(!pendingImportData) return;
+  const mode = document.querySelector('input[name="importMode"]:checked').value;
+  
+  if (mode === "replace") {
+    state = pendingImportData;
+  } 
+  else if (mode === "append") {
+    pendingImportData.tabs.forEach(t => {
+      const clonedTab = JSON.parse(JSON.stringify(t));
+      clonedTab.id = uid(); 
+      clonedTab.name = (clonedTab.name || "Untitled") + " - Imported";
+      clonedTab.scenarios.forEach(s => { 
+        s.id = uid(); 
+        if(s.name) s.name += " - Imported"; 
+      }); 
+      state.tabs.push(clonedTab);
+    });
+  } 
+  else if (mode === "merge") {
+    const activeT = activeTab();
+    pendingImportData.tabs.forEach(t => {
+      t.scenarios.forEach(s => {
+        const clonedScen = JSON.parse(JSON.stringify(s));
+        clonedScen.id = uid(); 
+        if(clonedScen.name) clonedScen.name += " - Imported";
+        activeT.scenarios.push(clonedScen);
+      });
+    });
+  }
+  
+  render(); importBackdrop.style.display = "none"; pendingImportData = null;
+});
+
+document.getElementById("addScenarioBtn").addEventListener("click", () => {
+  const tab = activeTab(); const newId = uid();
+  tab.scenarios.push({ id: newId, name:"", fields: [], evidenceHtml:"", isOpen: true });
+  render();
+  setTimeout(() => { const inp = document.querySelector(`input[data-sid="${newId}"][data-field="name"]`); if (inp) inp.focus(); }, 50);
+});
+
+document.getElementById("renameTabBtn").addEventListener("click", () => {
+  const tab = activeTab();
+  promptDialog("Rename tab", tab.name, "Give this tab a short name.", (val) => { tab.name = (val || "Untitled").trim(); render(); });
+});
+
+// ========= EXPORT LOGIC (Level 2 Custom Selection) =========
+const exportHtmlBtn = document.getElementById("exportHtmlBtn");
+const exportBackdrop = document.getElementById("exportBackdrop");
+const exportCancelBtn = document.getElementById("exportCancelBtn");
+const exportConfirmBtn = document.getElementById("exportConfirmBtn");
+
+exportHtmlBtn.addEventListener("click", () => {
+  const list = document.getElementById("exportChecklist"); list.innerHTML = "";
+  state.tabs.forEach((tab, tIdx) => {
+    const group = document.createElement("div"); group.className = "export-tab-group";
+    const tLabel = document.createElement("label"); tLabel.className = "export-tab-label";
+    const tCheck = document.createElement("input"); tCheck.type = "checkbox"; tCheck.checked = true; tCheck.dataset.tabId = tab.id;
+    tLabel.appendChild(tCheck); tLabel.appendChild(document.createTextNode(tab.name || `Tab ${tIdx+1}`)); group.appendChild(tLabel);
+
+    const sList = document.createElement("div"); sList.className = "export-scen-list";
+    tab.scenarios.forEach((sc, sIdx) => {
+      const sLabel = document.createElement("label"); sLabel.className = "export-scen-label";
+      const sCheck = document.createElement("input"); sCheck.type = "checkbox"; sCheck.checked = true; sCheck.dataset.tabId = tab.id; sCheck.dataset.scenId = sc.id;
+      
+      const sName = (sc.name || "").trim();
+      sLabel.appendChild(sCheck); sLabel.appendChild(document.createTextNode(sName ? `${sIdx+1}. ${sName}` : `Item ${sIdx+1}`)); sList.appendChild(sLabel);
+    });
+
+    tCheck.addEventListener("change", (e) => { sList.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = e.target.checked); });
+    sList.addEventListener("change", () => {
+      const all = sList.querySelectorAll('input[type="checkbox"]').length;
+      const checked = sList.querySelectorAll('input[type="checkbox"]:checked').length;
+      tCheck.checked = (all === checked && all > 0); tCheck.indeterminate = (checked > 0 && checked < all);
+    });
+    group.appendChild(sList); list.appendChild(group);
+  });
+  exportBackdrop.style.display = "flex";
+});
+
+exportCancelBtn.addEventListener("click", () => { exportBackdrop.style.display = "none"; });
+exportBackdrop.addEventListener("click", (e) => { if(e.target === exportBackdrop) exportCancelBtn.click(); });
+
+exportConfirmBtn.addEventListener("click", () => {
+  const filteredState = { activeTabId: null, tabs: [] };
+  const tabGroups = document.querySelectorAll('.export-tab-group');
+  tabGroups.forEach(group => {
+    const tCheck = group.querySelector('.export-tab-label input');
+    if (tCheck.checked || tCheck.indeterminate) {
+      const originalTab = state.tabs.find(t => t.id === tCheck.dataset.tabId);
+      if (originalTab) {
+        const newTab = { ...originalTab, scenarios: [] };
+        group.querySelectorAll('.export-scen-list input:checked').forEach(sCheck => {
+           const originalScen = originalTab.scenarios.find(s => s.id === sCheck.dataset.scenId);
+           if(originalScen) newTab.scenarios.push({...originalScen});
+        });
+        if (newTab.scenarios.length > 0 || tCheck.checked) { filteredState.tabs.push(newTab); }
+      }
+    }
+  });
+
+  if (filteredState.tabs.length === 0) { alert("Please select at least one item to export."); return; }
+  filteredState.activeTabId = filteredState.tabs[0].id;
+  exportBackdrop.style.display = "none";
+  exportHTML(filteredState); 
+});
+
+document.addEventListener("toggle", (e) => {
+  if (e.target.matches("details.scenario")) {
+    const sc = findScenario(e.target.dataset.sid);
+    if (sc) { sc.isOpen = e.target.open; saveState(); }
+  }
+}, true);
+
+document.addEventListener("input", (e) => {
+  const nameInp = e.target.closest("input[data-field='name']");
+  if (nameInp) { const sc = findScenario(nameInp.dataset.sid); if (sc) { sc.name = nameInp.value; saveState(); } return; }
+  const keyInp = e.target.closest("input[data-fkey]");
+  if (keyInp) { const sc = findScenario(keyInp.dataset.sid); const field = sc.fields.find(f => f.id === keyInp.dataset.fkey); if (field) { field.key = keyInp.value; saveState(); renderPanelOnly(); } return; }
+  const valInp = e.target.closest("input[data-fval]");
+  if (valInp) { const sc = findScenario(valInp.dataset.sid); const field = sc.fields.find(f => f.id === valInp.dataset.fval); if (field) { field.val = valInp.value; saveState(); renderPanelOnly(); } return; }
+});
+
+document.addEventListener("input", (e) => {
+  const ev = e.target.closest(".evidence[data-evidence]");
+  if (!ev) return;
+  const sc = findScenario(ev.getAttribute("data-evidence"));
+  if (!sc) return;
+  sc.evidenceHtml = ev.innerHTML; saveState();
+});
+
+document.addEventListener("click", (e) => {
+  const actionBtn = e.target.closest('.action-btn');
+  if(actionBtn && e.target.closest('summary')) { e.preventDefault(); }
+
+  const cfBtn = e.target.closest("[data-createfile]");
+  if (cfBtn) { openCreateFileDialog(cfBtn.dataset.createfile); return; }
+
+  // Action Buttons
+  const dupBtn = e.target.closest("[data-duplicate]");
+  if (dupBtn) {
+      const sc = findScenario(dupBtn.dataset.duplicate);
+      if(sc) {
+          const clone = JSON.parse(JSON.stringify(sc));
+          clone.id = uid(); clone.name = (clone.name || "Untitled") + " (Copy)";
+          clone.fields.forEach(f => f.id = uid());
+          const tab = activeTab();
+          const idx = tab.scenarios.findIndex(s => s.id === sc.id);
+          tab.scenarios.splice(idx + 1, 0, clone);
+          render();
+      }
+      return;
+  }
+
+  const mBtn = e.target.closest("[data-move]");
+  if (mBtn) { openMoveDialog(mBtn.dataset.move); return; }
+
+  const tplBtn = e.target.closest("[data-template]");
+  if (tplBtn) {
+      const sc = findScenario(tplBtn.dataset.template);
+      if(sc) {
+          promptDialog("Save Template", (sc.name || "Item") + " Template", "Name your template:", (name) => {
+              if(!name) return;
+              const tpl = JSON.parse(JSON.stringify(sc)); delete tpl.id; tpl.fields.forEach(f => delete f.id);
+              templates.push({ id: uid(), name: name, data: tpl });
+              saveTemplates();
+          });
+      }
+      return;
+  }
+
+  const cmdBtn = e.target.closest('[data-cmd]');
+  if (cmdBtn) {
+    e.preventDefault(); const cmd = cmdBtn.dataset.cmd; const val = cmdBtn.dataset.val || null;
+    document.execCommand(cmd, false, val); updateToolbarState(); 
+    const ev = cmdBtn.closest('.evidence-wrap').querySelector('.evidence');
+    if (ev) persistEvidence(ev);
+    return;
+  }
+
+  const del = e.target.closest("[data-delete]"); if (del){ deleteScenario(del.dataset.delete); return; }
+  const att = e.target.closest("[data-attach]"); if (att){ openFilePicker(att.dataset.attach); return; }
+  const addF = e.target.closest("[data-addfield]");
+  if (addF){
+    const sc = findScenario(addF.dataset.addfield);
+    if(sc) { sc.fields.push({ id: uid(), key:"", val:"" }); render(); setTimeout(() => { const inputs = document.querySelectorAll(`input[data-sid="${sc.id}"][data-fkey]`); if(inputs.length > 0) inputs[inputs.length - 1].focus(); }, 50); }
+    return;
+  }
+  const delF = e.target.closest("[data-delfield]"); if (delF){ const sc = findScenario(delF.dataset.sid); if(sc) { sc.fields = sc.fields.filter(f => f.id !== delF.dataset.delfield); render(); } return; }
+});
+
+document.addEventListener("paste", (e) => {
+  const ev = e.target.closest(".evidence[data-evidence]"); if (!ev) return;
+  const dt = e.clipboardData; if (!dt) return;
+  const files = [...dt.files || []]; const imgFile = files.find(f => f.type && f.type.startsWith("image/"));
+  if (imgFile){ 
+      e.preventDefault(); 
+      const sel = window.getSelection(); if (sel.rangeCount > 0) savedRange = sel.getRangeAt(0); 
+      insertImageFileIntoEvidence(imgFile, ev); 
+      return; 
+  }
+});
+
+// QUICK COPY ATTACHMENT LOGIC
+document.addEventListener("click", async (e) => {
+  const copyBtn = e.target.closest(".copy-att");
+  if (copyBtn) {
+    e.preventDefault(); e.stopPropagation();
+    const attachmentSpan = copyBtn.closest('.attachment');
+    if (!attachmentSpan) return;
+
+    try {
+      const clone = attachmentSpan.cloneNode(true);
+      const html = clone.outerHTML + "&nbsp;";
+      const plainText = clone.innerText || "Attachment";
+      
+      if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+        const item = new ClipboardItem({
+          "text/html": new Blob([html], { type: "text/html" }),
+          "text/plain": new Blob([plainText], { type: "text/plain" })
+        });
+        await navigator.clipboard.write([item]);
+      } else {
+        throw new Error("ClipboardItem not supported or not secure context");
+      }
+    } catch(err) {
+      const temp = document.createElement("div");
+      temp.contentEditable = "true";
+      temp.innerHTML = attachmentSpan.outerHTML + "&nbsp;";
+      temp.style.position = "fixed"; temp.style.opacity = "0";
+      document.body.appendChild(temp);
+      const range = document.createRange(); range.selectNodeContents(temp);
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      document.execCommand("copy");
+      document.body.removeChild(temp);
+    }
+
+    const oldTxt = copyBtn.innerHTML; copyBtn.innerHTML = "check_circle"; 
+    setTimeout(() => copyBtn.innerHTML = oldTxt, 1500);
+    return;
+  }
+});
+
+// The core attachment preview/download logic
+document.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-dataurl]"); if (!a) return; e.preventDefault();
+  const dataurl = a.dataset.dataurl; if (!dataurl) return;
+  const name = a.dataset.name || a.getAttribute("download") || "attachment";
+  
+  const parts = dataurl.split(",");
+  const meta = parts[0] || ""; const b64 = parts[1] || "";
+  const m = /data:(.*?);base64/.exec(meta); const mime = (m && m[1]) ? m[1] : "application/octet-stream";
+  
+  const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+  const blob = new Blob([arr], {type:mime});
+  const isText = mime.startsWith('text/') || mime.includes('json') || mime.includes('xml') || mime.includes('sql') || mime.includes('javascript') || mime.includes('plain');
+
+  if (isText) {
+    const reader = new FileReader();
+    reader.onload = (readEvent) => {
+      document.getElementById('fpTitle').textContent = name;
+      document.getElementById('fpContent').textContent = readEvent.target.result;
+      document.getElementById('filePreviewBackdrop').style.display = 'flex';
+      document.getElementById('fpDownloadBtn').onclick = () => {
+        const url = URL.createObjectURL(blob); const tmp = document.createElement("a");
+        tmp.href = url; tmp.download = name; document.body.appendChild(tmp); tmp.click();
+        setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+      };
+    }; reader.readAsText(blob); return;
+  }
+  const url = URL.createObjectURL(blob); const tmp = document.createElement("a"); tmp.href = url; tmp.download = name;
+  document.body.appendChild(tmp); tmp.click(); setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+});
+
+/* ========= Global Keyboard Shortcuts ========= */
+document.addEventListener("keydown", (e) => {
+  
+  // ---> NEW SPACEBAR FIX <---
+  // Prevents the browser from natively toggling the <details> card when space or enter is pressed inside the name input
+  if (e.target.matches("summary .header-name-input")) {
+    if (e.key === " " || e.code === "Space") {
+      e.preventDefault();
+      // Use execCommand to preserve undo stack, fallback to manual string mutation if unsupported
+      if (!document.execCommand("insertText", false, " ")) {
+          const start = e.target.selectionStart;
+          const end = e.target.selectionEnd;
+          e.target.value = e.target.value.substring(0, start) + " " + e.target.value.substring(end);
+          e.target.selectionStart = e.target.selectionEnd = start + 1;
+          e.target.dispatchEvent(new Event("input", {bubbles:true}));
+      }
+      return;
+    }
+    if (e.key === "Enter") {
+      e.preventDefault();
+      e.target.blur();
+      return;
+    }
+  }
+  // ---> END SPACEBAR FIX <---
+
+  if (document.getElementById("dlgBackdrop").style.display === "flex" || 
+      document.getElementById("themeBackdrop").style.display === "flex" ||
+      document.getElementById("helpBackdrop").style.display === "flex" ||
+      document.getElementById("cfBackdrop").style.display === "flex" ||
+      document.getElementById("exportBackdrop").style.display === "flex" ||
+      document.getElementById("importBackdrop").style.display === "flex" ||
+      document.getElementById("compareBackdrop").style.display === "flex" ||
+      document.getElementById("filePreviewBackdrop").style.display === "flex" ||
+      document.getElementById("imgPreviewBackdrop").style.display === "flex" ||
+      document.getElementById("tplBackdrop").style.display === "flex" ||
+      document.getElementById("moveBackdrop").style.display === "flex") {
+      
+      if (e.key === "Escape") {
+         document.getElementById("dlgCancel").click();
+         document.getElementById("themeClose").click();
+         document.getElementById("helpClose").click();
+         document.getElementById("cfCancel").click();
+         document.getElementById("exportCancelBtn").click();
+         document.getElementById("importCancelBtn").click();
+         document.getElementById("compCloseBtn").click();
+         document.getElementById("fpCloseBtn").click();
+         document.getElementById("tplCloseBtn").click();
+         document.getElementById("moveCancelBtn").click();
+         document.getElementById("imgPreviewBackdrop").style.display = "none";
+      }
+      return; 
+  }
+
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const cmdOrCtrl = isMac ? e.metaKey : e.ctrlKey;
+
+  if (cmdOrCtrl && e.key.toLowerCase() === 's') { e.preventDefault(); document.getElementById("exportHtmlBtn").click(); }
+  else if (cmdOrCtrl && e.key.toLowerCase() === 'o') { e.preventDefault(); document.getElementById("importBtn").click(); }
+  else if (e.altKey) {
+    const key = e.key.toLowerCase();
+    if (key === 'n') { e.preventDefault(); document.getElementById("addScenarioBtn").click(); }
+    if (key === 'r') { e.preventDefault(); document.getElementById("renameTabBtn").click(); }
+    if (key === 't') { e.preventDefault(); promptNewTab(); }
+    if (key === 'c') { e.preventDefault(); document.getElementById("themeBtn").click(); }
+    if (key === 'h') { e.preventDefault(); document.getElementById("helpBtn").click(); }
+    if (key === 'v') { e.preventDefault(); document.getElementById("compareBtn").click(); }
+    if (key === 'f') { 
+      e.preventDefault(); let sc = null;
+      if (lastFocusedScenarioId) sc = findScenario(lastFocusedScenarioId);
+      if (!sc) { const tab = activeTab(); if(tab && tab.scenarios.length > 0) sc = tab.scenarios[tab.scenarios.length - 1]; }
+      if (sc) {
+         sc.fields.push({ id: uid(), key:"", val:"" }); render();
+         setTimeout(() => { const inputs = document.querySelectorAll(`input[data-sid="${sc.id}"][data-fkey]`); if(inputs.length > 0) inputs[inputs.length - 1].focus(); }, 50);
+      }
+    }
+  }
+});
+
+/* ========= Helpers ========= */
+function renderPanelOnly(){
+  const tab = activeTab(); if (!tab) return;
+  const panels = [...document.querySelectorAll(".tab-panel")];
+  panels.forEach(panel => {
+    const cards = [...panel.querySelectorAll("details.scenario")];
+    cards.forEach((card, idx) => {
+      const sid = card.dataset.sid; const sc = findScenario(sid); if(!sc) return;
+      const tagsContainer = card.querySelector(".summary-tags") || card.querySelector(".summary-sub");
+      const validFields = sc.fields.filter(f => f.key.trim() || f.val.trim());
+      if(validFields.length > 0) {
+        const tagsHtml = validFields.map(f => `<span class="tag"><b>${escapeHtml(f.key || "Field")}:</b> ${escapeHtml(f.val || "-")}</span>`).join("");
+        if(tagsContainer.className === "summary-sub") { tagsContainer.outerHTML = `<div class="summary-tags">${tagsHtml}</div>`; } else { tagsContainer.innerHTML = tagsHtml; }
+      } else { if(tagsContainer.className === "summary-tags") { tagsContainer.outerHTML = `<div class="summary-sub">Click to expand/collapse</div>`; } }
+    });
+  });
+}
+
+function findScenario(sid){ for (const t of state.tabs){ const sc = t.scenarios.find(s => s.id === sid); if (sc) return sc; } return null; }
+function deleteScenario(sid){ const tab = activeTab(); if(confirm("Are you sure you want to delete this item?")) { tab.scenarios = tab.scenarios.filter(s => s.id !== sid); render(); } }
+function moveCursorToEnd(el) { el.focus(); const range = document.createRange(); range.selectNodeContents(el); range.collapse(false); const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); }
+
+function openFilePicker(sid){
+  const input = document.querySelector(`input[type="file"][data-file="${sid}"]`); const ev = document.querySelector(`.evidence[data-evidence="${sid}"]`);
+  if (!input || !ev) return;
+  input.onchange = () => {
+    const f = input.files && input.files[0]; if (!f) return;
+    if (f.type && f.type.startsWith("image/")){ insertImageFileIntoEvidence(f, ev, f.name); input.value = ""; return; }
+    const r = new FileReader();
+    r.onload = () => {
+      const dataUrl = r.result; 
+      const html = `<span class="attachment" contenteditable="false"><a href="${dataUrl}" download="${f.name}" data-name="${f.name}" data-dataurl="${dataUrl}"><span class="material-symbols-outlined" style="font-size:16px;">attachment</span> ${f.name}</a><span class="copy-att material-symbols-outlined" title="Copy file" data-copy="${dataUrl}" contenteditable="false">content_copy</span></span>&nbsp;`;
+      restoreSelectionAndInsert(ev, html);
+      input.value = ""; 
+    }; r.readAsDataURL(f);
+  }; input.click();
+}
+
+function insertImageFileIntoEvidence(file, ev, altText){
+  const r = new FileReader();
+  r.onload = () => {
+    const html = `<img src="${r.result}" alt="${altText || 'attached image'}" style="width:100%;" data-w="100" contenteditable="false" />&nbsp;`;
+    restoreSelectionAndInsert(ev, html);
+  }; r.readAsDataURL(file);
+}
+
+function persistEvidence(ev){ const sid = ev.getAttribute("data-evidence"); const sc = findScenario(sid); if (!sc) return; sc.evidenceHtml = ev.innerHTML; saveState(); }
+
+/* ========= Tabs CRUD ========= */
+function promptNewTab(){
+  promptDialog("New tab", `Tab ${state.tabs.length+1}`, "Enter a name for the new tab.", (val) => {
+    const name = (val || "Untitled").trim(); const id = uid(); const newScenId = uid();
+    state.tabs.push({ id, name, scenarios: [{ id: newScenId, name:"", fields: [], evidenceHtml:"", isOpen: true }] }); state.activeTabId = id; render();
+    setTimeout(() => { const inp = document.querySelector(`input[data-sid="${newScenId}"][data-field="name"]`); if (inp) inp.focus(); }, 50);
+  });
+}
+
+function closeTab(id){
+  const idx = state.tabs.findIndex(t => t.id === id); if (idx < 0) return;
+  if(confirm("Are you sure you want to delete this tab and all its items?")) {
+    state.tabs.splice(idx, 1);
+    if (state.activeTabId === id){ state.activeTabId = state.tabs[Math.max(0, idx-1)]?.id || null; if (!state.activeTabId) { state.tabs.push({ id: uid(), name: "Tab 1", scenarios: [] }); state.activeTabId = state.tabs[0].id; } }
+    render();
+  }
+}
+
+/* ========= Export HTML (Takes an exportData param instead of full state) ========= */
+function exportHTML(exportData){
+  const styles = document.querySelector('style').innerHTML;
+  const payloadStr = JSON.stringify(exportData).replace(/</g, '\\u003c');
+
+  const exportTemplate = `<!DOCTYPE html>
+<html lang="en" data-theme="${currentTheme}" data-color="${currentColor}">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>SnapSpace Export</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+<style>${styles}</style>
+</head>
+<body class="readonly">
+  <header class="appbar"><div class="appbar-inner"><div class="title"><div class="badge"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><path d="M14 2v6h6"></path><path d="M9 15l2 2 4-4"></path></svg></div> SnapSpace Export</div></div></header>
+  <div class="tabsbar"><div class="tabs" id="tabs"></div></div>
+  <main><div id="panel"></div></main>
+
+  <script id="data-payload" type="application/json">${payloadStr}<\/script>
+  <script>
+    const state = JSON.parse(document.getElementById('data-payload').textContent);
+    let activeTabId = state.activeTabId;
+
+    function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({"&":"&","<":"<",">":">",'"':"&quot;","'":"&#39;"}[s])); }
+    function escapeAttr(str){ return escapeHtml(str).replace(/"/g, "&quot;"); }
+
+    function renderView() {
+      const tabsEl = document.getElementById("tabs");
+      tabsEl.innerHTML = state.tabs.map(tab => \`<button class="tab \${tab.id === activeTabId ? 'active' : ''}" data-tab="\${tab.id}">\${escapeHtml(tab.name)}</button>\`).join("");
+      const panelEl = document.getElementById("panel");
+      const activeTab = state.tabs.find(t => t.id === activeTabId);
+      if(!activeTab) return;
+
+      const scenariosHtml = activeTab.scenarios.map((sc, idx) => {
+        const validFields = (sc.fields || []).filter(f => f.key.trim() || f.val.trim());
+        const tagsHtml = validFields.map(f => \`<span class="tag"><b>\${escapeHtml(f.key || "Field")}:</b> \${escapeHtml(f.val || "-")}</span>\`).join("");
+        
+        const fieldsHtml = validFields.map(f => \`
+          <div class="field-row" style="margin-bottom: 8px; display: flex; gap: 8px;">
+            <input class="input" value="\${escapeAttr(f.key)}" readonly style="width: 30%; background: transparent; border-color: var(--outline-2); font-weight: 700; user-select: text;" />
+            <input class="input" value="\${escapeAttr(f.val)}" readonly style="flex: 1; background: var(--surface-2); border-color: var(--outline-2); user-select: text;" />
+          </div>
+        \`).join("");
+
+        const fieldsSection = fieldsHtml ? \`
+          <div class="label" style="margin-bottom: 8px;"><span class="material-symbols-outlined" style="font-size: 14px;">tune</span> Properties</div>
+          <div class="field-list" style="margin-bottom: 16px;">\${fieldsHtml}</div>
+        \` : '';
+
+        return \`<details class="scenario" \${sc.isOpen !== false ? 'open' : ''}>
+            <summary>
+              <div class="summary-content">
+                <div style="display:flex; align-items:center; gap:6px; width: 100%;">
+                  <div style="font-weight: 750; font-size: 14px; color: var(--text); white-space:nowrap;">Item \${idx+1}</div>
+                  <span style="color: var(--muted); font-weight: 400;">—</span>
+                  <input class="header-name-input" value="\${escapeAttr(sc.name||"")}" placeholder="Untitled Item" readonly />
+                </div>
+                \${tagsHtml ? \`<div class="summary-tags">\${tagsHtml}</div>\` : ''}
+              </div>
+              <div class="summary-actions">
+                <div class="chev"><span class="material-symbols-outlined">expand_more</span></div>
+              </div>
+            </summary>
+            <div class="card-body">
+              \${fieldsSection}
+              <div class="evidence-wrap" style="margin-top: 0;">
+                <div class="label" style="margin-bottom: 6px;"><span class="material-symbols-outlined" style="font-size: 14px;">image</span> Notes & Media</div>
+                <div class="evidence">\${sc.evidenceHtml}</div>
+              </div>
+            </div>
+          </details>\`;
+      }).join("");
+      panelEl.innerHTML = scenariosHtml;
+    }
+
+    let imgClickTimerExport = null;
+    document.addEventListener("click", (e) => {
+      const img = e.target.closest(".evidence img"); 
+      if (img){ 
+        if(e.detail > 1) return; 
+        clearTimeout(imgClickTimerExport);
+        imgClickTimerExport = setTimeout(() => {
+          let w = Number(img.dataset.w || 100); w = (w <= 40) ? 100 : (w - 20); img.dataset.w = String(w); img.style.width = w + "%"; 
+        }, 200);
+        return; 
+      }
+      
+      const tabBtn = e.target.closest(".tab"); if(tabBtn) { activeTabId = tabBtn.dataset.tab; renderView(); return; }
+      
+      // Quick Copy logic for exported view
+      const copyBtn = e.target.closest(".copy-att");
+      if (copyBtn) {
+        e.preventDefault(); e.stopPropagation();
+        const attachmentSpan = copyBtn.closest('.attachment');
+        if (!attachmentSpan) return;
+
+        try {
+          const clone = attachmentSpan.cloneNode(true);
+          const html = clone.outerHTML + "&nbsp;";
+          const plainText = clone.innerText || "Attachment";
+          
+          if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+            const item = new ClipboardItem({
+              "text/html": new Blob([html], { type: "text/html" }),
+              "text/plain": new Blob([plainText], { type: "text/plain" })
+            });
+            navigator.clipboard.write([item]);
+          } else { throw new Error("Fallback"); }
+        } catch(err) {
+          const temp = document.createElement("div"); temp.contentEditable = "true";
+          temp.innerHTML = attachmentSpan.outerHTML + "&nbsp;"; temp.style.position = "fixed"; temp.style.opacity = "0";
+          document.body.appendChild(temp); const range = document.createRange(); range.selectNodeContents(temp);
+          const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range); document.execCommand("copy");
+          document.body.removeChild(temp);
+        }
+        const oldTxt = copyBtn.innerHTML; copyBtn.innerHTML = "check_circle"; setTimeout(() => copyBtn.innerHTML = oldTxt, 1500);
+        return;
+      }
+
+      const a = e.target.closest("a[data-dataurl]"); if (!a) return; e.preventDefault(); const dataurl = a.dataset.dataurl; if (!dataurl) return;
+      const name = a.dataset.name || a.getAttribute("download") || "attachment";
+      const parts = dataurl.split(","); const meta = parts[0] || ""; const b64 = parts[1] || ""; const m = /data:(.*?);base64/.exec(meta); const mime = (m && m[1]) ? m[1] : "application/octet-stream";
+      
+      const bin = atob(b64); const arr = new Uint8Array(bin.length); for (let i=0; i<bin.length; i++) arr[i] = bin.charCodeAt(i);
+      const blob = new Blob([arr], {type:mime});
+      const isText = mime.startsWith('text/') || mime.includes('json') || mime.includes('xml') || mime.includes('sql') || mime.includes('javascript') || mime.includes('plain');
+
+      if (isText) {
+        const reader = new FileReader();
+        reader.onload = (re) => {
+           let fpBackdrop = document.getElementById("fpBackdropExport");
+           if (!fpBackdrop) {
+              fpBackdrop = document.createElement("div"); fpBackdrop.id = "fpBackdropExport";
+              fpBackdrop.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);z-index:9999;display:flex;align-items:center;justify-content:center;padding:16px;";
+              fpBackdrop.innerHTML = '<div style="background:var(--surface);width:min(800px, 100%);max-height:90vh;display:flex;flex-direction:column;border-radius:18px;box-shadow:var(--shadow);overflow:hidden;"><div style="padding:14px 16px;border-bottom:1px solid var(--outline-2);display:flex;justify-content:space-between;align-items:center;font-weight:bold;color:var(--text);"><span id="fpTitleExport" style="word-break:break-all;"></span><div><button id="fpCopyExport" style="margin-right:8px;padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-weight:600;"><span class="material-symbols-outlined">content_copy</span> Copy Text</button><button id="fpDlExport" style="margin-right:8px;padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid transparent;background:var(--primary);color:#fff;font-weight:600;"><span class="material-symbols-outlined">download</span> Download</button><button id="fpCloseExport" style="padding:6px 12px;cursor:pointer;border-radius:999px;border:1px solid var(--outline);background:var(--surface);color:var(--text);font-weight:600;">Close</button></div></div><div style="flex:1;overflow:auto;background:var(--input-bg);"><pre id="fpContentExport" style="margin:0;padding:16px;font-family:monospace;font-size:13px;white-space:pre-wrap;word-wrap:break-word;color:var(--text);"></pre></div></div>';
+              document.body.appendChild(fpBackdrop);
+              document.getElementById("fpCloseExport").onclick = () => fpBackdrop.style.display = "none";
+              fpBackdrop.onclick = (ev) => { if(ev.target === fpBackdrop) fpBackdrop.style.display = "none"; };
+              
+              document.getElementById("fpCopyExport").onclick = async () => {
+                const textToCopy = document.getElementById("fpContentExport").textContent;
+                try {
+                  if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(textToCopy);
+                  } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = textToCopy;
+                    textArea.style.position = "fixed";
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(textArea);
+                  }
+                  const btn = document.getElementById("fpCopyExport"); const orig = btn.innerHTML; btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Copied!';
+                  setTimeout(() => { btn.innerHTML = orig; }, 1500);
+                } catch(err) { alert("Failed to copy text."); }
+              };
+           }
+           document.getElementById("fpTitleExport").textContent = name;
+           document.getElementById("fpContentExport").textContent = re.target.result;
+           document.getElementById("fpDlExport").onclick = () => {
+               const url = URL.createObjectURL(blob); const tmp = document.createElement("a");
+               tmp.href = url; tmp.download = name; document.body.appendChild(tmp); tmp.click();
+               setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+           };
+           fpBackdrop.style.display = "flex";
+        };
+        reader.readAsText(blob); return;
+      }
+      
+      const url = URL.createObjectURL(blob); const tmp = document.createElement("a"); tmp.href = url; tmp.download = name;
+      document.body.appendChild(tmp); tmp.click(); setTimeout(() => { tmp.remove(); URL.revokeObjectURL(url); }, 500);
+    });
+
+    document.addEventListener("dblclick", (e) => {
+      const img = e.target.closest(".evidence img");
+      if (img){
+        let backdrop = document.getElementById("imgPreviewBackdropExport");
+        if (!backdrop) {
+          backdrop = document.createElement("div"); backdrop.id = "imgPreviewBackdropExport";
+          backdrop.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;cursor:zoom-out;";
+          const imgEl = document.createElement("img"); imgEl.id = "imgPreviewElExport";
+          imgEl.style.cssText = "max-width:90vw;max-height:90vh;border-radius:8px;box-shadow:var(--shadow);background:var(--surface);";
+          backdrop.appendChild(imgEl); document.body.appendChild(backdrop);
+          backdrop.onclick = () => backdrop.style.display = "none";
+        }
+        document.getElementById("imgPreviewElExport").src = img.src;
+        backdrop.style.display = "flex"; window.getSelection().removeAllRanges();
+      }
+    });
+
+    renderView(); 
+  <\/script>
+</body>
+</html>`;
+
+  const blob = new Blob([exportTemplate], {type:"text/html"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  const now = new Date(); const dateStr = now.toISOString().slice(0,10);
+  a.download = `Workspace_Export_${dateStr}.html`;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { document.body.removeChild(a); URL.revokeObjectURL(url); }, 500);
+}
+
+/* ========= Dialog utility ========= */
+const dlgBackdrop = document.getElementById("dlgBackdrop");
+const dlgTitle = document.getElementById("dlgTitle");
+const dlgInput = document.getElementById("dlgInput");
+const dlgHint = document.getElementById("dlgHint");
+const dlgCancel = document.getElementById("dlgCancel");
+const dlgOk = document.getElementById("dlgOk");
+let dlgCallback = null;
+
+function promptDialog(title, initial, hint, onOk){
+  dlgTitle.textContent = title; dlgHint.textContent = hint || ""; dlgInput.value = initial || "";
+  dlgCallback = onOk; dlgBackdrop.style.display = "flex"; setTimeout(() => dlgInput.focus(), 0);
+}
+
+dlgInput.addEventListener("keydown", (e) => { if(e.key === "Enter" && dlgBackdrop.style.display === "flex") { e.preventDefault(); dlgOk.click(); } });
+dlgCancel.addEventListener("click", () => { dlgBackdrop.style.display = "none"; dlgCallback = null; });
+dlgOk.addEventListener("click", () => { const val = dlgInput.value; dlgBackdrop.style.display = "none"; const cb = dlgCallback; dlgCallback = null; if (cb) cb(val); });
+dlgBackdrop.addEventListener("click", (e) => { if (e.target === dlgBackdrop) dlgCancel.click(); });
+
+/* ========= Utils ========= */
+function escapeHtml(str){ return String(str).replace(/[&<>"']/g, s => ({"&":"&","<":"<",">":">",'"':"&quot;","'":"&#39;"}[s])); }
+function escapeAttr(str){ return escapeHtml(str).replace(/"/g, "&quot;"); }
+
+/* Initial render */
+bootApp();
+
+</script>
+</body>
+</html>
