@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Toddler Counting Game</title>
+    <style>
+        /* --- Material 3 Design System Variables --- */
+        :root {
+            --md-sys-color-surface: #FDFBFF;
+            --md-sys-color-on-surface: #1A1C1E;
+            --md-sys-color-surface-variant: #DFE2EB;
+            --md-sys-color-primary: #006493;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #CAE6FF;
+            --md-sys-color-on-primary-container: #001E30;
+            --md-sys-color-secondary-container: #D7E3F8;
+            --md-sys-color-on-secondary-container: #101C2B;
+            --md-sys-color-error-container: #FFDAD6;
+            --md-sys-color-on-error-container: #410002;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--md-sys-color-surface); 
+            color: var(--md-sys-color-on-surface);
+            text-align: center; touch-action: manipulation;
+            overflow: hidden; display: flex; flex-direction: column;
+            height: 100vh; width: 100vw; box-sizing: border-box;
+        }
+
+        /* --- Settings Screen (Material 3 Cards) --- */
+        #settings-screen {
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-start; height: 100vh; overflow-y: auto;
+            padding: 24px; box-sizing: border-box;
+        }
+        
+        .md3-card {
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 24px; padding: 24px;
+            width: 100%; max-width: 400px;
+            margin-bottom: 16px; text-align: left;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .md3-card h3 { margin-top: 0; margin-bottom: 16px; color: var(--md-sys-color-on-surface); font-size: 1.2rem; }
+        
+        .input-group { margin-bottom: 16px; }
+        .input-group label { display: block; font-size: 0.9rem; font-weight: 500; margin-bottom: 8px; color: #44474E; }
+        .input-group input[type="text"] { 
+            width: 100%; padding: 12px 16px; 
+            background: var(--md-sys-color-surface);
+            border: 1px solid #74777F; border-radius: 12px; 
+            box-sizing: border-box; font-size: 1rem; color: var(--md-sys-color-on-surface);
+        }
+        .input-group input[type="file"] { font-size: 0.9rem; color: #44474E; }
+        
+        .md3-fab {
+            background-color: var(--md-sys-color-primary); color: var(--md-sys-color-on-primary);
+            border: none; border-radius: 100px;
+            padding: 16px 32px; font-size: 1.2rem; font-weight: 600; cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,100,147,0.3); margin-top: 16px; margin-bottom: 32px;
+            transition: box-shadow 0.2s, transform 0.1s;
+        }
+        .md3-fab:active { transform: scale(0.98); box-shadow: 0 2px 4px rgba(0,100,147,0.2); }
+
+        /* --- Game Screen Layout (3 Parts) --- */
+        #game-screen {
+            display: none; flex-direction: column; height: 100vh; width: 100%;
+        }
+
+        /* Part 1: Top Bar (Material Segmented Buttons) */
+        #top-part {
+            flex: 0 0 auto; padding: 16px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--md-sys-color-surface); z-index: 10;
+        }
+        
+        .settings-icon { 
+            font-size: 1.5rem; cursor: pointer; background: var(--md-sys-color-surface-variant); 
+            border: none; border-radius: 50%; width: 48px; height: 48px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--md-sys-color-on-surface);
+        }
+
+        .segmented-btn-container {
+            display: flex; align-items: center; 
+            background: var(--md-sys-color-surface-variant);
+            border-radius: 100px; padding: 4px;
+        }
+        .segment-btn {
+            background: transparent; border: none; border-radius: 100px;
+            padding: 8px 20px; font-size: 1.1rem; font-weight: 500; cursor: pointer;
+            color: #44474E; transition: background 0.2s, color 0.2s;
+        }
+        .segment-btn.active { 
+            background: var(--md-sys-color-secondary-container); 
+            color: var(--md-sys-color-on-secondary-container);
+            font-weight: 600;
+        }
+
+        /* Part 2: Middle Area */
+        #middle-part {
+            flex: 1 1 auto; position: relative; display: flex;
+            justify-content: center; align-items: center; padding: 16px;
+            overflow: hidden;
+        }
+        #object-area {
+            display: flex; flex-wrap: wrap; justify-content: center; align-content: center; gap: 12px; width: 100%;
+        }
+        
+        .game-object {
+            height: 80px; width: 80px; object-fit: contain;
+            opacity: 0; transform: scale(0); 
+            transition: opacity 0.3s ease, transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            /* Soft material shadow for images */
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));
+        }
+        .game-object.text-mode {
+            font-size: 5rem; height: auto; display: flex; justify-content: center; align-items: center;
+        }
+        .game-object.show { opacity: 1; transform: scale(1); }
+
+        .reaction-gif {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 200; display: none; border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 90%; max-height: 90%; object-fit: contain;
+            background: white; /* In case GIF has transparent edges */
+        }
+
+        /* Part 3: Bottom Pad (Material Squicles) */
+        #bottom-part {
+            flex: 0 0 auto; display: flex; flex-wrap: wrap; justify-content: center;
+            align-content: center; gap: 12px; padding: 20px 16px 32px 16px;
+            background: var(--md-sys-color-surface);
+        }
+        
+        .num-btn {
+            background-color: var(--md-sys-color-primary-container); 
+            color: var(--md-sys-color-on-primary-container); 
+            border: none; border-radius: 24px; /* Material Squicle */
+            font-weight: 600; cursor: pointer; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: none; opacity: 0.3; 
+            transition: opacity 0.2s, transform 0.1s, background-color 0.2s;
+        }
+        
+        .pad-5 .num-btn, .pad-7 .num-btn { width: calc(33% - 12px); max-width: 120px; aspect-ratio: 1; font-size: 3.5rem; }
+        .pad-10 .num-btn { width: calc(20% - 10px); max-width: 80px; aspect-ratio: 1; font-size: 2.2rem; border-radius: 20px; }
+        
+        .num-btn.ready { pointer-events: auto; opacity: 1; }
+        .num-btn.ready:active { 
+            transform: scale(0.95); 
+            background-color: var(--md-sys-color-primary); 
+            color: var(--md-sys-color-on-primary); 
+        }
+
+        /* Animations */
+        @keyframes dance { 0%, 100% { transform: translateY(0) rotate(0deg); } 25% { transform: translateY(-15px) rotate(-10deg); } 50% { transform: translateY(0) rotate(0deg); } 75% { transform: translateY(-15px) rotate(10deg); } }
+        .dancing { animation: dance 0.6s infinite; }
+        @keyframes wiggle { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-8px); } 75% { transform: translateX(8px); } }
+        .wiggling { animation: wiggle 0.3s ease-in-out 2; }
+        #confetti { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
+    </style>
+</head>
+<body>
+
+    <div id="settings-screen">
+        <h1 style="color: var(--md-sys-color-primary); margin-bottom: 24px;">Setup Game</h1>
+        
+        <div class="md3-card">
+            <h3>🦆 Animal / Object</h3>
+            <div class="input-group">
+                <label>Upload Image:</label>
+                <input type="file" id="animal-file" accept="image/*">
+            </div>
+            <div class="input-group">
+                <label>OR Paste URL / Emoji:</label>
+                <input type="text" id="animal-url" placeholder="e.g., 🦆 or https://link.to/image.png">
+            </div>
+        </div>
+
+        <div class="md3-card">
+            <h3>🎉 Celebrate GIF</h3>
+            <div class="input-group">
+                <label>Upload GIF:</label>
+                <input type="file" id="celeb-file" accept="image/gif, image/*">
+            </div>
+            <div class="input-group">
+                <label>OR Paste URL:</label>
+                <input type="text" id="celeb-url" placeholder="Leave blank for default">
+            </div>
+        </div>
+
+        <div class="md3-card">
+            <h3>🤔 Uh-Oh GIF</h3>
+            <div class="input-group">
+                <label>Upload GIF:</label>
+                <input type="file" id="uhoh-file" accept="image/gif, image/*">
+            </div>
+            <div class="input-group">
+                <label>OR Paste URL:</label>
+                <input type="text" id="uhoh-url" placeholder="Leave blank for default">
+            </div>
+        </div>
+
+        <button class="md3-fab" onclick="applySettingsAndStart()">Play Now</button>
+    </div>
+
+    <div id="game-screen">
+        <div id="top-part">
+            <button class="settings-icon" onclick="openSettings()">⚙️</button>
+            <div class="segmented-btn-container">
+                <button class="segment-btn active" onclick="changeLevel(5, this)">5</button>
+                <button class="segment-btn" onclick="changeLevel(7, this)">7</button>
+                <button class="segment-btn" onclick="changeLevel(10, this)">10</button>
+            </div>
+        </div>
+
+        <div id="middle-part" onclick="initAudio()">
+            <canvas id="confetti"></canvas>
+            <img id="success-gif" class="reaction-gif" src="" alt="Success">
+            <img id="uhoh-gif" class="reaction-gif" src="" alt="Uh Oh">
+            <div id="object-area"></div>
+        </div>
+
+        <div id="bottom-part" onclick="initAudio()">
+            </div>
+    </div>
+
+    <script>
+        // --- State Variables ---
+        let config = {
+            animal: "🦆", isAnimalImage: false,
+            celebrate: "https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif",
+            uhoh: "https://media.giphy.com/media/3o7btUg31w31rR8dC8/giphy.gif"
+        };
+        
+        let maxNumber = 5;
+        let targetCount = 0;
+        let audioCtx;
+        let isInputReady = false;
+        let showIntervalId = null;
+
+        // --- Helper: Read File as Base64 (Prevents mobile garbage collection bugs) ---
+        function readFileAsDataURL(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (e) => resolve(e.target.result);
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // --- Settings Management ---
+        function openSettings() {
+            if(showIntervalId) clearInterval(showIntervalId);
+            document.getElementById('game-screen').style.display = 'none';
+            document.getElementById('settings-screen').style.display = 'flex';
+        }
+
+        async function getFileOrUrl(fileInputId, urlInputId, defaultUrl) {
+            const fileInput = document.getElementById(fileInputId);
+            const urlInput = document.getElementById(urlInputId);
+            
+            if (fileInput.files && fileInput.files[0]) {
+                return await readFileAsDataURL(fileInput.files[0]);
+            } else if (urlInput.value.trim() !== "") {
+                return urlInput.value.trim();
+            }
+            return defaultUrl;
+        }
+
+        async function applySettingsAndStart() {
+            // Process Animal securely using FileReader
+            const animalFile = document.getElementById('animal-file');
+            const animalUrl = document.getElementById('animal-url').value.trim();
+            
+            if (animalFile.files && animalFile.files[0]) {
+                config.animal = await readFileAsDataURL(animalFile.files[0]);
+                config.isAnimalImage = true;
+            } else if (animalUrl !== "") {
+                config.animal = animalUrl;
+                config.isAnimalImage = animalUrl.startsWith('http') || animalUrl.startsWith('data:');
+            } else {
+                config.animal = "🦆";
+                config.isAnimalImage = false;
+            }
+
+            // Process GIFs securely using FileReader
+            config.celebrate = await getFileOrUrl('celeb-file', 'celeb-url', "https://media.giphy.com/media/13CoXDiaCcCoyk/giphy.gif");
+            config.uhoh = await getFileOrUrl('uhoh-file', 'uhoh-url', "https://media.giphy.com/media/3o7btUg31w31rR8dC8/giphy.gif");
+
+            document.getElementById('settings-screen').style.display = 'none';
+            document.getElementById('game-screen').style.display = 'flex';
+            
+            initAudio();
+            buildNumberPad();
+            startRound();
+        }
+
+        // --- Game Controls ---
+        function changeLevel(value, btn) {
+            initAudio(); 
+            maxNumber = value;
+            document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            buildNumberPad();
+            startRound();
+        }
+
+        function buildNumberPad() {
+            const pad = document.getElementById('bottom-part');
+            pad.innerHTML = '';
+            pad.className = 'pad-' + maxNumber; 
+            for (let i = 1; i <= maxNumber; i++) {
+                const btn = document.createElement('button');
+                btn.className = 'num-btn';
+                btn.innerText = i;
+                btn.onclick = () => handleGuess(i);
+                pad.appendChild(btn);
+            }
+        }
+
+        // --- Audio System ---
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+        }
+
+        function playSynthTone(freq, type, duration) {
+            if (!audioCtx) return;
+            const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+            osc.type = type; osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start(); gain.gain.setValueAtTime(1, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+            osc.stop(audioCtx.currentTime + duration);
+        }
+
+        function playSound(type) {
+            if (type === 'beep') playSynthTone(600, 'sine', 0.15);
+            if (type === 'win') {
+                playSynthTone(400, 'sine', 0.2); setTimeout(() => playSynthTone(500, 'sine', 0.2), 150);
+                setTimeout(() => playSynthTone(600, 'sine', 0.4), 300); setTimeout(() => playSynthTone(800, 'sine', 0.6), 450);
+            }
+            if (type === 'uhoh') {
+                if (!audioCtx) return;
+                const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(120, audioCtx.currentTime + 0.6);
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.start(); gain.gain.setValueAtTime(1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.6);
+                osc.stop(audioCtx.currentTime + 0.6);
+            }
+        }
+
+        // --- Game Logic ---
+        function startRound() {
+            if (showIntervalId) clearInterval(showIntervalId);
+            document.getElementById('success-gif').style.display = 'none';
+            document.getElementById('uhoh-gif').style.display = 'none';
+            isInputReady = false; 
+            setButtonsReady(false);
+            
+            const objectArea = document.getElementById('object-area');
+            objectArea.innerHTML = ''; 
+            objectArea.style.opacity = 1;
+            
+            targetCount = Math.floor(Math.random() * maxNumber) + 1;
+            
+            for (let i = 0; i < targetCount; i++) {
+                let el;
+                if (config.isAnimalImage) {
+                    el = document.createElement('img');
+                    el.src = config.animal;
+                    el.className = 'game-object';
+                    // Fallback if image link breaks
+                    el.onerror = () => { el.outerHTML = `<div class="game-object text-mode">❓</div>`; };
+                } else {
+                    el = document.createElement('div');
+                    el.innerText = config.animal;
+                    el.className = 'game-object text-mode';
+                }
+                objectArea.appendChild(el);
+            }
+
+            let currentShow = 0;
+
+            setTimeout(() => {
+                showIntervalId = setInterval(() => {
+                    const objects = document.querySelectorAll('.game-object');
+                    
+                    if (currentShow < targetCount && objects[currentShow]) {
+                        objects[currentShow].classList.add('show');
+                        playSound('beep');
+                        currentShow++;
+                    } else {
+                        // Finished counting
+                        clearInterval(showIntervalId);
+                        setTimeout(() => { isInputReady = true; setButtonsReady(true); }, 400); 
+                    }
+                }, 800);
+            }, 500);
+        }
+
+        function setButtonsReady(isReady) {
+            document.querySelectorAll('.num-btn').forEach(btn => {
+                isReady ? btn.classList.add('ready') : btn.classList.remove('ready');
+            });
+        }
+
+        function handleGuess(num) {
+            if (!isInputReady) return;
+            initAudio();
+
+            const objects = document.querySelectorAll('.game-object');
+            const objectArea = document.getElementById('object-area');
+
+            if (num === targetCount) {
+                isInputReady = false; setButtonsReady(false);
+                playSound('win'); triggerConfetti();
+                
+                const successGif = document.getElementById('success-gif');
+                successGif.src = config.celebrate;
+                successGif.style.display = 'block';
+                objectArea.style.opacity = 0; 
+                
+                setTimeout(() => startRound(), 3500); 
+            } else {
+                isInputReady = false; setButtonsReady(false);
+                playSound('uhoh');
+                
+                const uhohGif = document.getElementById('uhoh-gif');
+                uhohGif.src = config.uhoh;
+                uhohGif.style.display = 'block';
+                objectArea.style.opacity = 0.15; 
+                
+                setTimeout(() => {
+                    uhohGif.style.display = 'none';
+                    objectArea.style.opacity = 1; 
+                    isInputReady = true; setButtonsReady(true);
+                }, 2000);
+            }
+        }
+
+        // --- Confetti System ---
+        const canvas = document.getElementById('confetti'), ctx = canvas.getContext('2d');
+        let confettis = [], confettiActive = false;
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+        function triggerConfetti() {
+            confettis = [];
+            for (let i = 0; i < 100; i++) {
+                confettis.push({ x: Math.random() * canvas.width, y: Math.random() * canvas.height - canvas.height, w: Math.random() * 12 + 6, h: Math.random() * 12 + 6, color: `hsl(${Math.random() * 360}, 100%, 50%)`, vy: Math.random() * 4 + 3, vx: Math.random() * 3 - 1.5, rot: Math.random() * 360, rotSpeed: Math.random() * 10 - 5 });
+            }
+            if (!confettiActive) { confettiActive = true; drawConfetti(); }
+            setTimeout(() => { confettiActive = false; ctx.clearRect(0, 0, canvas.width, canvas.height); }, 3500);
+        }
+
+        function drawConfetti() {
+            if (!confettiActive) return; ctx.clearRect(0, 0, canvas.width, canvas.height);
+            confettis.forEach(c => {
+                c.y += c.vy; c.x += c.vx; c.rot += c.rotSpeed;
+                ctx.save(); ctx.translate(c.x + c.w/2, c.y + c.h/2); ctx.rotate(c.rot * Math.PI / 180);
+                ctx.fillStyle = c.color; ctx.fillRect(-c.w/2, -c.h/2, c.w, c.h); ctx.restore();
+            });
+            requestAnimationFrame(drawConfetti);
+        }
+    </script>
+</body>
+</html>
