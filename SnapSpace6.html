@@ -34,7 +34,7 @@
     --shadow: 0 10px 25px rgba(0, 0, 0, .3); --shadow-2: 0 6px 16px rgba(0, 0, 0, .4);
   }
   
-    /* ===== Scrollbars ===== */
+  /* ===== Scrollbars ===== */
   ::-webkit-scrollbar { width: 12px; height: 12px; }
   ::-webkit-scrollbar-track { background: var(--bg); }
   ::-webkit-scrollbar-thumb { background: var(--outline-2); border-radius: 6px; border: 3px solid var(--bg); }
@@ -60,9 +60,9 @@
   .action-btn .material-symbols-outlined { margin-right: 0; }
 
   /* ===== App bar ===== */
-  .appbar{ position: sticky; top:0; height: 64px; z-index: 50; background: var(--surface); opacity: 0.95; backdrop-filter: blur(10px); border-bottom: 1px solid var(--outline); transition: all 0.3s ease; }
-  .appbar-inner{ display:flex; align-items:center; height: 100%; gap:12px; padding: 0 16px; max-width: 1400px; margin: 0 auto; }
-  .title{ display:flex; align-items:center; gap:10px; flex:1; min-width: 150px; }
+  .appbar{ position: sticky; top:0; height: 64px; z-index: 95; background: var(--surface); opacity: 0.95; backdrop-filter: blur(10px); border-bottom: 1px solid var(--outline); transition: all 0.3s ease; }
+  .appbar-inner{ display:flex; align-items:center; height: 100%; gap:12px; padding: 0 16px; max-width: 100%; margin: 0 auto; }
+  .title{ display:flex; align-items:center; gap:10px; flex:1; min-width: 150px; font-weight: 750; font-size: 16px; }
   .title .badge{ width:34px; height:34px; display:grid; place-items:center; border-radius: 12px; background: linear-gradient(135deg, var(--grad-1), var(--grad-2)); color:white; box-shadow: var(--shadow-2); }
   
   .actions{ display:flex; gap:8px; flex-wrap: wrap; justify-content:flex-end; align-items: center; }
@@ -77,24 +77,37 @@
   .btn.icon-only { padding: 8px; border-radius: 8px; }
   .btn.icon-only .material-symbols-outlined { margin-right: 0; font-size: 20px; }
 
-  /* Hamburger Menu */
-  .hamburger-wrap { position: relative; display: inline-block; }
-  .menu-dropdown { position: absolute; top: 100%; left: 0; margin-top: 8px; background: var(--surface); border: 1px solid var(--outline-2); border-radius: 12px; box-shadow: var(--shadow); display: none; flex-direction: column; min-width: 180px; overflow: hidden; z-index: 100;}
-  .menu-dropdown.show { display: flex; }
-  .menu-item { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: transparent; border: none; color: var(--text); cursor: pointer; font-size: 13px; font-weight: 600; text-align: left; transition: background 0.2s ease; font-family: inherit;}
-  .menu-item:hover { background: var(--surface-2); }
-  .menu-item .material-symbols-outlined { font-size: 18px; color: var(--muted); }
+  /* ===== Sidebar Menu ===== */
+  .sidebar {
+    position: fixed; top: 64px; left: 0; bottom: 0; width: 260px;
+    background: var(--surface); border-right: 1px solid var(--outline);
+    z-index: 90; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-100%); overflow-y: auto;
+  }
+  .sidebar-inner { padding: 16px; display: flex; flex-direction: column; gap: 6px; }
+  .sidebar-backdrop {
+    position: fixed; top: 64px; inset: 0; background: rgba(0,0,0,0.4); backdrop-filter: blur(2px);
+    z-index: 89; display: none; opacity: 0; transition: opacity 0.3s ease;
+  }
+  
+  /* Mobile Sidebar States */
+  body.sidebar-show .sidebar { transform: translateX(0); box-shadow: var(--shadow); }
+  body.sidebar-show .sidebar-backdrop { display: block; opacity: 1; }
 
-  /* Wide Screen Navbar (Desktop) */
+  .menu-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: transparent; border: none; border-radius: 8px; color: var(--text); cursor: pointer; font-size: 14px; font-weight: 600; text-align: left; transition: all 0.2s ease; font-family: inherit;}
+  .menu-item:hover { background: var(--surface-2); }
+  .menu-item .material-symbols-outlined { font-size: 20px; color: var(--muted); }
+
+  /* ===== App Content Wrapper ===== */
+  .app-content { transition: padding-left 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+
+  /* Desktop Sidebar States */
   @media (min-width: 1100px) {
-    .hamburger-wrap { display: flex; align-items: center; }
-    #mainMenuBtn { display: none; }
-    .menu-dropdown {
-      position: static; display: flex !important; flex-direction: row; align-items: center;
-      box-shadow: none; border: none; background: transparent; padding: 0; margin: 0;
-    }
-    .menu-item { padding: 8px 12px; border-radius: 999px; border: 1px solid transparent; margin-right: 4px; white-space: nowrap; }
-    .menu-item:hover { background: var(--surface-2); border-color: var(--outline); }
+    .sidebar { transform: translateX(0); z-index: 40; }
+    body.sidebar-hide .sidebar { transform: translateX(-100%); }
+    body.sidebar-show .sidebar-backdrop { display: none; } /* Never show backdrop on wide */
+    .app-content { padding-left: 260px; }
+    body.sidebar-hide .app-content { padding-left: 0; }
   }
 
   /* ===== Tabs ===== */
@@ -195,6 +208,7 @@
   @media (max-width: 1100px){
     .appbar { height: auto; min-height: 60px; padding: 10px 0;}
     .appbar-inner{ flex-wrap: wrap; padding: 0 12px; }
+    .title { min-width: 100%; margin-bottom: 8px;}
     main{ padding: 12px 12px 22px; }
     .tabsbar { top: 60px; }
     summary { top: 106px; flex-direction: column; }
@@ -265,17 +279,9 @@
 <body>
   <header class="appbar">
     <div class="appbar-inner">
-      <div class="hamburger-wrap">
-        <button class="btn secondary icon-only" id="mainMenuBtn" title="Menu"><span class="material-symbols-outlined">menu</span></button>
-        <div class="menu-dropdown" id="mainMenuDropdown">
-          <button class="menu-item" id="compareBtn"><span class="material-symbols-outlined">compare_arrows</span> Compare Mode</button>
-          <button class="menu-item" id="tplOpenBtn"><span class="material-symbols-outlined">bookmarks</span> Templates</button>
-          <button class="menu-item" id="themeBtn"><span class="material-symbols-outlined">palette</span> Theme Settings</button>
-          <button class="menu-item" id="helpBtn"><span class="material-symbols-outlined">help</span> Documentation</button> 
-        </div>
-      </div>
+      <button class="btn secondary icon-only" id="mainMenuBtn" title="Menu" style="margin-right: 8px;"><span class="material-symbols-outlined">menu</span></button>
       
-      <div class="title" style="margin-left: 4px;">
+      <div class="title">
         <div class="badge">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -283,7 +289,9 @@
             <path d="M9 15l2 2 4-4"></path>
           </svg>
         </div>
-        <input type="text" id="workspaceTitleInput" placeholder="SnapSpace" title="Rename Workspace" style="border: none; background: transparent; font-weight: 750; font-size: 16px; color: var(--text); outline: none; width: 150px; font-family: inherit;" />
+        SnapSpace
+        <div style="width: 2px; height: 18px; background: var(--outline-2); margin: 0 8px; border-radius: 2px;"></div>
+        <input type="text" id="workspaceTitleInput" placeholder="Workspace" title="Rename Workspace" style="border: none; background: transparent; font-weight: 600; font-size: 15px; color: var(--muted); outline: none; flex: 1; min-width: 100px; font-family: inherit;" />
       </div>
       <div class="actions">
         <span id="saveIndicator" style="font-size: 12px; color: var(--primary); font-weight: 700; margin-right: 8px; opacity: 0; transition: opacity 0.3s; display: flex; align-items: center; gap: 4px; pointer-events: none;"><span class="material-symbols-outlined" style="font-size: 16px;">cloud_done</span> Saved locally</span>
@@ -297,18 +305,30 @@
     </div>
   </header>
 
-  <div class="tabsbar">
-    <div class="tabs" id="tabs"></div>
-  </div>
-
-  <main>
-    <div class="panel-head">
-      <div>
-        <div class="panel-meta" id="panelMeta"><span class="material-symbols-outlined" style="font-size: 16px;">lightbulb</span> Tip: Paste screenshots directly into Notes (Ctrl+V). Click images to resize. Drag tabs and items to reorder.</div>
-      </div>
+  <nav class="sidebar" id="sidebarMenu">
+    <div class="sidebar-inner">
+      <button class="menu-item" id="compareBtn"><span class="material-symbols-outlined">compare_arrows</span> Compare Mode</button>
+      <button class="menu-item" id="tplOpenBtn"><span class="material-symbols-outlined">bookmarks</span> Templates</button>
+      <button class="menu-item" id="themeBtn"><span class="material-symbols-outlined">palette</span> Theme Settings</button>
+      <button class="menu-item" id="helpBtn"><span class="material-symbols-outlined">help</span> Documentation</button> 
     </div>
-    <div id="panel"></div>
-  </main>
+  </nav>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <div class="app-content">
+    <div class="tabsbar">
+      <div class="tabs" id="tabs"></div>
+    </div>
+
+    <main>
+      <div class="panel-head">
+        <div>
+          <div class="panel-meta" id="panelMeta"><span class="material-symbols-outlined" style="font-size: 16px;">lightbulb</span> Tip: Paste screenshots directly into Notes (Ctrl+V). Click images to resize. Drag tabs and items to reorder.</div>
+        </div>
+      </div>
+      <div id="panel"></div>
+    </main>
+  </div>
 
   <div class="dlg-backdrop" id="dlgBackdrop" role="dialog" aria-modal="true">
     <div class="dlg">
@@ -619,6 +639,7 @@
 <pre>
 let state = {
   activeTabId: "uuid-string",
+  workspaceTitle: "My Project",
   tabs: [
     {
       id: "uuid-string",
@@ -675,17 +696,41 @@ applyTheme();
 const themeBtn = document.getElementById("themeBtn");
 const themeBackdrop = document.getElementById("themeBackdrop");
 const themeClose = document.getElementById("themeClose");
-themeBtn.addEventListener("click", () => { document.getElementById("mainMenuDropdown").classList.remove("show"); themeBackdrop.style.display = "flex"; });
+themeBtn.addEventListener("click", () => { document.body.classList.remove("sidebar-show"); themeBackdrop.style.display = "flex"; });
 themeClose.addEventListener("click", () => { themeBackdrop.style.display = "none"; });
 themeBackdrop.addEventListener("click", (e) => { if(e.target === themeBackdrop) themeBackdrop.style.display = "none"; });
 document.querySelectorAll('[data-set-theme]').forEach(el => { el.addEventListener('click', (e) => { currentTheme = e.target.dataset.setTheme; applyTheme(); }); });
 document.querySelectorAll('[data-set-color]').forEach(el => { el.addEventListener('click', (e) => { currentColor = e.target.dataset.setColor; applyTheme(); }); });
 
-/* ========= Hamburger Menu ========= */
+/* ========= Sidebar Hamburger Menu Logic ========= */
 const mainMenuBtn = document.getElementById("mainMenuBtn");
-const mainMenuDropdown = document.getElementById("mainMenuDropdown");
-mainMenuBtn.addEventListener("click", (e) => { e.stopPropagation(); mainMenuDropdown.classList.toggle("show"); });
-document.addEventListener("click", (e) => { if (!mainMenuDropdown.contains(e.target) && e.target !== mainMenuBtn) mainMenuDropdown.classList.remove("show"); });
+const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+
+mainMenuBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (window.innerWidth >= 1100) {
+        document.body.classList.toggle("sidebar-hide");
+    } else {
+        document.body.classList.toggle("sidebar-show");
+        setTimeout(() => sidebarBackdrop.style.opacity = "1", 10);
+    }
+});
+
+if(sidebarBackdrop) {
+    sidebarBackdrop.addEventListener("click", () => {
+        sidebarBackdrop.style.opacity = "0";
+        setTimeout(() => document.body.classList.remove("sidebar-show"), 300);
+    });
+}
+
+document.querySelectorAll('#sidebarMenu .menu-item').forEach(item => {
+    item.addEventListener("click", () => {
+        if(window.innerWidth < 1100) {
+           sidebarBackdrop.style.opacity = "0";
+           setTimeout(() => document.body.classList.remove("sidebar-show"), 300);
+        }
+    });
+});
 
 /* ========= Async Database Engine (IndexedDB) ========= */
 const DB_NAME = "SnapSpaceDB";
@@ -778,7 +823,7 @@ async function bootApp() {
     if (!state) {
         state = {
             activeTabId: null,
-            workspaceTitle: "SnapSpace",
+            workspaceTitle: "Workspace",
             tabs: [{ id: uid(), name: "Tab 1", scenarios: [{ id: uid(), name:"", fields: [], evidenceHtml:"", isOpen: true }] }]
         };
     }
@@ -788,7 +833,7 @@ async function bootApp() {
     }
     
     // Set workspace title
-    workspaceTitleInput.value = state.workspaceTitle || "SnapSpace";
+    workspaceTitleInput.value = state.workspaceTitle || "Workspace";
     
     render(); // Draw the UI now that data is loaded
 }
@@ -809,7 +854,7 @@ resetBtn.addEventListener("click", () => {
     if(confirm("Are you sure you want to reset the board? This will delete all tabs and items.\n\nNote: Your saved Templates will NOT be deleted.")) {
         state = {
             activeTabId: null,
-            workspaceTitle: state.workspaceTitle || "SnapSpace",
+            workspaceTitle: state.workspaceTitle || "Workspace",
             tabs: [{ id: uid(), name: "Tab 1", scenarios: [{ id: uid(), name:"", fields: [], evidenceHtml:"", isOpen: true }] }]
         };
         state.activeTabId = state.tabs[0].id;
@@ -1040,7 +1085,7 @@ const docsMenuToggle = document.getElementById('docsMenuToggle');
 const docsMain = document.getElementById('docsMain');
 
 helpBtn.addEventListener("click", () => { 
-  document.getElementById("mainMenuDropdown").classList.remove("show"); 
+  document.body.classList.remove("sidebar-show"); 
   helpBackdrop.style.display = "flex"; 
 });
 helpClose.addEventListener("click", () => { helpBackdrop.style.display = "none"; });
@@ -1146,7 +1191,7 @@ function renderTemplates() {
     });
 }
 
-tplOpenBtn.addEventListener("click", () => { document.getElementById("mainMenuDropdown").classList.remove("show"); renderTemplates(); tplBackdrop.style.display = "flex"; });
+tplOpenBtn.addEventListener("click", () => { document.body.classList.remove("sidebar-show"); renderTemplates(); tplBackdrop.style.display = "flex"; });
 tplCloseBtn.addEventListener("click", () => { tplBackdrop.style.display = "none"; });
 tplBackdrop.addEventListener("click", (e) => { if(e.target === tplBackdrop) tplBackdrop.style.display = "none"; });
 
@@ -1279,7 +1324,7 @@ compRightTab.addEventListener('change', () => { updateCompScenarios(compRightTab
 compRightScen.addEventListener('change', () => { renderCompEv(compRightScen, compRightEv); });
 
 compareBtn.addEventListener('click', () => {
-  document.getElementById("mainMenuDropdown").classList.remove("show");
+  document.body.classList.remove("sidebar-show");
   populateCompareSelects();
   if(state.tabs.length > 0) {
     renderCompEv(compLeftScen, compLeftEv);
