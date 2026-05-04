@@ -1474,7 +1474,11 @@ const exportConfirmBtn = document.getElementById("exportConfirmBtn");
 
 exportHtmlBtn.addEventListener("click", () => {
   const now = new Date(); 
-  document.getElementById("exportFilenameInput").value = `SnapSpace_Export_${now.toISOString().slice(0,10)}.html`;
+  // Create a safe filename from the workspace title (replace spaces/special chars with underscores)
+  const safeTitle = (state.workspaceTitle || "Workspace").replace(/[^a-z0-9]/gi, '_').replace(/_+/g, '_');
+  
+  // Apply it to the input
+  document.getElementById("exportFilenameInput").value = `${safeTitle}_Export_${now.toISOString().slice(0,10)}.html`;
     
   const list = document.getElementById("exportChecklist"); list.innerHTML = "";
   state.tabs.forEach((tab, tIdx) => {
