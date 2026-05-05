@@ -1352,12 +1352,25 @@ const moveCancelBtn = document.getElementById("moveCancelBtn");
 const moveConfirmBtn = document.getElementById("moveConfirmBtn");
 let scenarioToMoveId = null;
 
+let lastMoveStructureHash = null;
+ 
 function openMoveDialog(sid) {
-    moveSelect.innerHTML = appState.workspaces.map(ws => {
-        return `<optgroup label="${escapeHtml(ws.title)}">` + 
-               ws.tabs.map(t => `<option value="${ws.id}|${t.id}">${escapeHtml(t.name)}</option>`).join('') +
-               `</optgroup>`;
-    }).join('');
+    // 1. Generate a lightning-fast structural fingerprint
+    let currentHash = "";
+    for(let w of appState.workspaces) {
+       currentHash += w.id + w.title;
+       for(let t of w.tabs) currentHash += t.id + t.name;
+    }
+    
+    // 2. Only rebuild the DOM if the structure actually changed
+    if (lastMoveStructureHash !== currentHash) {
+        moveSelect.innerHTML = appState.workspaces.map(ws => {
+            return `<optgroup label="${escapeHtml(ws.title)}">` +
+                   ws.tabs.map(t => `<option value="${ws.id}|${t.id}">${escapeHtml(t.name)}</option>`).join('') +
+                   `</optgroup>`;
+        }).join('');
+        lastMoveStructureHash = currentHash;
+    }
     
     scenarioToMoveId = sid;
     moveBackdrop.style.display = 'flex';
@@ -1397,15 +1410,29 @@ const compRightTab = document.getElementById("compRightTab");
 const compRightScen = document.getElementById("compRightScen");
 const compRightEv = document.getElementById("compRightEv");
 
+let lastCompStructureHash = null;
+ 
 function populateCompareSelects() {
-  compLeftTab.innerHTML = ''; compRightTab.innerHTML = '';
-  state.tabs.forEach((t, idx) => {
-    const optionHTML = `<option value="${t.id}">${escapeHtml(t.name || `Tab ${idx+1}`)}</option>`;
-    compLeftTab.innerHTML += optionHTML;
-    compRightTab.innerHTML += optionHTML;
-  });
-  updateCompScenarios(compLeftTab, compLeftScen);
-  updateCompScenarios(compRightTab, compRightScen);
+  // Generate a fingerprint of current tabs and item names
+  let currentHash = "";
+  for(let t of state.tabs) {
+     currentHash += t.id + t.name;
+     for(let s of t.scenarios) currentHash += s.id + s.name;
+  }
+  
+  if (lastCompStructureHash !== currentHash) {
+      let optionsHtml = '';
+      state.tabs.forEach((t, idx) => {
+        optionsHtml += `<option value="${t.id}">${escapeHtml(t.name || `Tab ${idx+1}`)}</option>`;
+      });
+      
+      compLeftTab.innerHTML = optionsHtml;
+      compRightTab.innerHTML = optionsHtml;
+      updateCompScenarios(compLeftTab, compLeftScen);
+      updateCompScenarios(compRightTab, compRightScen);
+      
+      lastCompStructureHash = currentHash;
+  }
 }
 
 function updateCompScenarios(tabSelect, scenSelect) {
