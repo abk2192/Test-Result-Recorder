@@ -1347,18 +1347,17 @@ const moveSelect = document.getElementById("moveSelect");
 const moveCancelBtn = document.getElementById("moveCancelBtn");
 const moveConfirmBtn = document.getElementById("moveConfirmBtn");
 let scenarioToMoveId = null;
-
 let lastMoveStructureHash = null;
  
 function openMoveDialog(sid) {
-    // 1. Generate a lightning-fast structural fingerprint
+    // 1. Generate a structural fingerprint for instant caching
     let currentHash = "";
     for(let w of appState.workspaces) {
-       currentHash += w.id + w.title;
-       for(let t of w.tabs) currentHash += t.id + t.name;
+       currentHash += w.id + (w.title || "");
+       for(let t of w.tabs) currentHash += t.id + (t.name || "");
     }
     
-    // 2. Only rebuild the DOM if the structure actually changed
+    // 2. Only rebuild the HTML if the structure actually changed
     if (lastMoveStructureHash !== currentHash) {
         moveSelect.innerHTML = appState.workspaces.map(ws => {
             return `<optgroup label="${escapeHtml(ws.title)}">` +
@@ -1368,21 +1367,35 @@ function openMoveDialog(sid) {
         lastMoveStructureHash = currentHash;
     }
     
+    // 3. ALWAYS auto-select the current project & tab so it doesn't default to the last used one
+    if (state && state.activeTabId) {
+        moveSelect.value = `${state.id}|${state.activeTabId}`;
+    }
+ 
     scenarioToMoveId = sid;
     moveBackdrop.style.display = 'flex';
 }
+ 
 moveCancelBtn.addEventListener("click", () => { moveBackdrop.style.display = 'none'; scenarioToMoveId = null; });
 moveBackdrop.addEventListener("click", (e) => { if(e.target === moveBackdrop) moveCancelBtn.click(); });
+ 
 moveConfirmBtn.addEventListener("click", () => {
     const val = moveSelect.value;
     if(!scenarioToMoveId || !val) return;
     
     const [destWsId, destTabId] = val.split('|');
-    const srcTab = activeTab(); 
+    const srcTab = activeTab();
     const destWs = appState.workspaces.find(w => w.id === destWsId);
     const destTab = destWs ? destWs.tabs.find(t => t.id === destTabId) : null;
     
     if(srcTab && destTab) {
+        // Prevent accidental moves if the destination is the exact same tab it's already in
+        if (srcTab.id === destTab.id) {
+            moveBackdrop.style.display = 'none';
+            scenarioToMoveId = null;
+            return;
+        }
+ 
         const scIdx = srcTab.scenarios.findIndex(s => s.id === scenarioToMoveId);
         if(scIdx >= 0) {
             const sc = srcTab.scenarios.splice(scIdx, 1)[0];
