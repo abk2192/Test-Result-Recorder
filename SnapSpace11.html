@@ -231,13 +231,9 @@
   @media (max-width: 1100px){
     .appbar { height: auto; min-height: 60px; padding: 10px 0;}
     .appbar-inner{ flex-wrap: wrap; padding: 0 12px; }
-    .title { min-width: 100%; margin-bottom: 8px;}
+    .title { flex: 1; min-width: 0; margin-bottom: 8px; } /* Allows title to sit next to menu icon */
+    .actions { width: 100%; } /* Forces action buttons and search to the next row */
     main{ padding: 12px 12px 22px; }
-    .tabsbar { top: 60px; }
-    summary { top: 106px; flex-direction: column; }
-    .summary-actions { width: 100%; justify-content: flex-end; flex-wrap: wrap;}
-    .search-wrap { width: 100%; margin-bottom: 8px; margin-right: 0 !important; flex: 1 1 100%; }
-  }
 
   /* Dialogs */
   .dlg-backdrop{ position: fixed; inset:0; background: rgba(0,0,0,.5); backdrop-filter: blur(4px); display:none; align-items:center; justify-content:center; padding: 16px; z-index: 120; }
