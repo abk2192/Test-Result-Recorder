@@ -1661,7 +1661,9 @@ exportConfirmBtn.addEventListener("click", () => {
 });
 
 document.addEventListener("toggle", (e) => {
-  if (e.target.matches("details.scenario")) {
+  // We added "&& e.target.isConnected" to prevent the browser
+  // from closing the item during rapid redraws
+  if (e.target.matches("details.scenario") && e.target.isConnected) {
     const sc = findScenario(e.target.dataset.sid);
     if (sc) { sc.isOpen = e.target.open; saveState(); }
   }
