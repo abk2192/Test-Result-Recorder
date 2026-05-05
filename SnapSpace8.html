@@ -217,7 +217,13 @@
   @media (max-width: 1100px){
     .appbar { height: auto; min-height: 60px; padding: 10px 0;}
     .appbar-inner{ flex-wrap: wrap; padding: 0 12px; }
-    .title { min-width: 100%; margin-bottom: 8px;}
+    
+    /* Allow title to share the line with the hamburger menu */
+    .title { min-width: 0; flex: 1; margin-bottom: 8px; }
+    
+    /* Force the action buttons and search to wrap to the next line */
+    .actions { width: 100%; justify-content: flex-start; }
+    
     main{ padding: 12px 12px 22px; }
     .tabsbar { top: 60px; }
     summary { top: 106px; flex-direction: column; }
